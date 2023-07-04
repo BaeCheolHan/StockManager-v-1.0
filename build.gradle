@@ -42,9 +42,9 @@ dependencies {
 task copyPrivate(type: Copy) {
     delete "/src/main/resources"
     copy {
-        from './StockManager-private'
+        from './StockManager-private/resources'
         include "*.yml"
-        into 'src/main/resources'
+        into '/src/main/resources'
     }
 }
 
