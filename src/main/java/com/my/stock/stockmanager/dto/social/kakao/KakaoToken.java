@@ -1,11 +1,9 @@
 package com.my.stock.stockmanager.dto.social.kakao;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class Token {
+public class KakaoToken {
 	private String access_token;
 	private String token_type;
 	private String refresh_token;

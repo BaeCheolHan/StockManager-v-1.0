@@ -1,8 +1,8 @@
 package com.my.stock.stockmanager.dto.social.kakao;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class KakaoProfile {
     private String nickname;
     private String thumbnail_image_url;

@@ -5,7 +5,7 @@ import com.my.stock.stockmanager.constants.SnsType;
 import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
 import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoLoginResponse;
-import com.my.stock.stockmanager.dto.social.kakao.Token;
+import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.Member;
@@ -41,8 +41,8 @@ public class SnsLoginService {
 		param.put("redirect_url", kakaoCallbackUrl);
 		param.put("code", code);
 
-		String apiResponse = ApiCaller.getInstance().post("https://kauth.kakao.com/oauth/token", param, MediaType.APPLICATION_FORM_URLENCODED);
-		Token token = new ObjectMapper().readValue(apiResponse, Token.class);
+		KakaoToken token = new ObjectMapper()
+				.readValue(ApiCaller.getInstance().post("https://kauth.kakao.com/oauth/token", param, MediaType.APPLICATION_FORM_URLENCODED), KakaoToken.class);
 
 		KaKaoUserData userInfo = getKakaoUserData(token.getAccess_token());
 		Member entity = memberRepository.findByEmail(userInfo.getKakao_account().getEmail())

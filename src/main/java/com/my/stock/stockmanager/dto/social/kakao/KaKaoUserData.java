@@ -1,8 +1,8 @@
 package com.my.stock.stockmanager.dto.social.kakao;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class KaKaoUserData {
     private String id;
     private String connected_at;
