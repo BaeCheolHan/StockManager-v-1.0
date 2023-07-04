@@ -1,0 +1,9 @@
+POST http://localhost:8080/member
+Content-Type: application/json
+
+{
+  "email": "joker10421@gmail.com",
+  "nickName": "배철한",
+  "password": "1234"
+
+}

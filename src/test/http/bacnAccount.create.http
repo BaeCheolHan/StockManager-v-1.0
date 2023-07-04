@@ -1,0 +1,11 @@
+POST http://localhost:8080/account
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "bankAccount" : {
+    "accountNumber": "1111",
+    "bank": "003"
+  }
+
+}
