@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.rdb.dto.request;
 
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
+import com.my.stock.stockmanager.constants.Bank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,5 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BankAccountSaveRequest {
 	private Long memberId;
-	private BankAccount bankAccount;
+	private String alias;
+	private Bank bank;
 }

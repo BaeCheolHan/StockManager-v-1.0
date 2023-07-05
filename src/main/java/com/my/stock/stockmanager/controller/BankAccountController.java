@@ -1,11 +1,14 @@
 package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
+import com.my.stock.stockmanager.base.response.bank.accunt.BankAccountResponse;
 import com.my.stock.stockmanager.constants.Bank;
 import com.my.stock.stockmanager.constants.BankType;
 import com.my.stock.stockmanager.constants.ResponseCode;
+import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
 import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
 import com.my.stock.stockmanager.rdb.dto.request.BankAccountSaveRequest;
+import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +25,19 @@ import java.util.stream.Collectors;
 public class BankAccountController {
 	private final BankAccountService bankAccountService;
 
-	@PostMapping
+	@PostMapping("/account")
 	public BaseResponse save(@RequestBody BankAccountSaveRequest request) {
 		bankAccountService.save(request);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
-	@GetMapping
+	@GetMapping("/bank/member/{memberId}")
+	public BankAccountResponse findBankAccountByMemberId(@PathVariable Long memberId) {
+		List<BankAccountDto> accounts = bankAccountService.findBankAccountByMemberId(memberId);
+		return new BankAccountResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), accounts);
+	}
+
+	@GetMapping("/bank")
 	public void find(Long id) {
 		bankAccountService.findById(id);
 	}

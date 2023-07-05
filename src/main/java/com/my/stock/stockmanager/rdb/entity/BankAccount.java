@@ -22,6 +22,8 @@ public class BankAccount extends BaseTimeEntity {
 
 	private String memo;
 
+	private String alias;
+
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Bank bank;

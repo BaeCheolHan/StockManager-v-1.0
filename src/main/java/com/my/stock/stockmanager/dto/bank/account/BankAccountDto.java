@@ -14,11 +14,21 @@ import lombok.Setter;
 public class BankAccountDto {
 	private Long id;
 	private String memo;
+
+	private String alias;
 	private Bank bank;
+
+	private BankEnumMapperValue bankValue;
 
 	public BankAccountDto(BankAccount bankAccount) {
 		this.id = bankAccount.getId();
+		this.alias = bankAccount.getAlias();
 		this.memo = bankAccount.getMemo();
 		this.bank = bankAccount.getBank();
+
+		if (this.bank != null) {
+			this.bankValue = new BankEnumMapperValue(this.bank);
+		}
+
 	}
 }
