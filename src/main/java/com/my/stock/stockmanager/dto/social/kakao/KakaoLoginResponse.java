@@ -1,6 +1,7 @@
 package com.my.stock.stockmanager.dto.social.kakao;
 
 import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
+import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import lombok.*;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public class KakaoLoginResponse {
 	private String email;
 	private Long memberId;
 	private List<BankAccountDto> bankAccounts;
+	private ExchangeRate exchangeRate;
 }

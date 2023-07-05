@@ -8,7 +8,9 @@ import com.my.stock.stockmanager.dto.social.kakao.KakaoLoginResponse;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
+import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import com.my.stock.stockmanager.rdb.entity.Member;
+import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,8 @@ public class SnsLoginService {
 
 	private final MemberRepository memberRepository;
 
+	private final ExchangeRateRepository exchangeRateRepository;
+
 	@Transactional
 	public KakaoLoginResponse kakaoLogin(String code) throws Exception {
 		HashMap<String, Object> param = new HashMap<>();
@@ -54,10 +58,12 @@ public class SnsLoginService {
 				);
 
 		List<BankAccount> bankAccounts = entity.getBankAccount();
+		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
 		KakaoLoginResponse resp = KakaoLoginResponse.builder()
 				.memberId(entity.getId())
 				.email(entity.getEmail())
 				.profile(userInfo.getKakao_account().getProfile())
+				.exchangeRate(exchangeRateList.get(exchangeRateList.size() -1))
 				.build();
 
 		if (bankAccounts != null) {
