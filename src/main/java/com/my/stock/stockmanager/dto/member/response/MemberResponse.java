@@ -7,7 +7,7 @@ import lombok.*;
 
 @Getter
 public class MemberResponse extends BaseResponse {
-    private Member data;
+    private final Member data;
 
     @Builder
     public MemberResponse(Member data, ResponseCode code, String message) {

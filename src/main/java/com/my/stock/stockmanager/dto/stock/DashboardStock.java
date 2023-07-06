@@ -13,5 +13,5 @@ public class DashboardStock {
 	private String national;
 	private String name;
 	private Double avgPrice;
-	private Long quantity;
+	private Double quantity;
 }
