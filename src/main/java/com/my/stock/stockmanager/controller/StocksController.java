@@ -2,31 +2,40 @@ package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
+import com.my.stock.stockmanager.dto.stocks.response.StocksListResponse;
 import com.my.stock.stockmanager.rdb.entity.Stocks;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
+import com.my.stock.stockmanager.service.StocksService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/stocks")
+@RequestMapping("/api")
 public class StocksController {
 	private final StocksRepository repository;
 
-	@GetMapping("/oversea")
+	private final StocksService stocksService;
+
+	@GetMapping("/stocks/{national}")
+	public StocksListResponse getStocks(@PathVariable String national) {
+		List<Stocks> list = stocksService.getStocksListEitherKrAndOverSea(national);
+		return StocksListResponse.builder().stocksList(list).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+	}
+
+	@PostMapping("/excel/oversea")
 	public BaseResponse saveOverSeaStocks() {
 		Workbook workbook = null;
 		try {
@@ -50,7 +59,7 @@ public class StocksController {
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
-	@GetMapping("kospi")
+	@PostMapping("/excel/kospi")
 	public BaseResponse saveKospi() {
 		Workbook workbook = null;
 		try {
@@ -75,7 +84,7 @@ public class StocksController {
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
-	@GetMapping("kosdaq")
+	@PostMapping("/excel/kosdaq")
 	public BaseResponse saveKosdaq() {
 		Workbook workbook = null;
 		try {

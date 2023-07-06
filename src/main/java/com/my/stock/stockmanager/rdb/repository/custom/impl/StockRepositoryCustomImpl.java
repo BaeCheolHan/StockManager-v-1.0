@@ -24,7 +24,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 	public List<DashboardStock> findAllDashboardStock(Long memberId, Long bankId) {
 		QStock stock = QStock.stock;
 		QStocks stocks = QStocks.stocks;
-
+		QBankAccount bankAccount = QBankAccount.bankAccount;
 		BooleanBuilder builder = new BooleanBuilder();
 		if(memberId != null) {
 			builder.and(stock.bankAccount.member.id.eq(memberId));
@@ -40,13 +40,14 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 						stocks.code,
 						stocks.national,
 						stocks.name,
-						stock.price.avg().as("averPrice"),
+						stock.price.avg().as("avgPrice"),
 						stock.quantity.sum().as("quantity")
 						))
 				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
+				.innerJoin(bankAccount)
 				.where(builder)
-				.groupBy(stock.symbol)
 				.orderBy(stock.quantity.asc())
+				.groupBy(stock.symbol)
 				.fetch();
 	}
 }
