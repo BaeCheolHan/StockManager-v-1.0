@@ -2,6 +2,7 @@ package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
+import com.my.stock.stockmanager.dto.stocks.response.StocksCodeListResponse;
 import com.my.stock.stockmanager.dto.stocks.response.StocksListResponse;
 import com.my.stock.stockmanager.rdb.entity.Stocks;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
@@ -29,10 +30,16 @@ public class StocksController {
 
 	private final StocksService stocksService;
 
-	@GetMapping("/stocks/{national}")
-	public StocksListResponse getStocks(@PathVariable String national) {
-		List<Stocks> list = stocksService.getStocksListEitherKrAndOverSea(national);
+	@GetMapping("/stocks/{code}")
+	public StocksListResponse getStocks( @PathVariable String code) {
+		List<Stocks> list = stocksService.getStocksListByCode(code);
 		return StocksListResponse.builder().stocksList(list).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+	}
+
+	@GetMapping("/stocks/code/{national}")
+	public StocksCodeListResponse getStockCodes(@PathVariable String national) {
+		List<String> list = stocksService.getStocksCodeListByNational(national);
+		return StocksCodeListResponse.builder().codes(list).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
 	}
 
 	@PostMapping("/excel/oversea")

@@ -9,12 +9,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class StocksListResponse extends BaseResponse {
-	List<Stocks> stocksList;
+public class StocksCodeListResponse extends BaseResponse {
+	List<String> codes;
 
 	@Builder
-	public StocksListResponse(List<Stocks> stocksList, ResponseCode code, String message) {
+	public StocksCodeListResponse(List<String> codes, ResponseCode code, String message) {
 		super(code, message);
-		this.stocksList = stocksList;
+		this.codes = codes;
 	}
 }

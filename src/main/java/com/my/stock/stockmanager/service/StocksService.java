@@ -13,12 +13,11 @@ public class StocksService {
 
 	private final StocksRepository repository;
 
-	public List<Stocks> getStocksListEitherKrAndOverSea(String national) {
-		if(national.equals("KR")) {
-			return repository.findAllByNational(national);
-		} else {
-			return repository.findAllByNationalNot(national);
-		}
+	public List<String> getStocksCodeListByNational(String national) {
+		return repository.findCodeByNationalGroupByCode(national);
+	}
 
+	public List<Stocks> getStocksListByCode(String code) {
+		return repository.findAllByCode(code);
 	}
 }
