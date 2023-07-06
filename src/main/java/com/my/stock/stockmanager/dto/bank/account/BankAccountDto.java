@@ -18,7 +18,7 @@ public class BankAccountDto {
 	private String alias;
 	private Bank bank;
 
-	private BankEnumMapperValue bankValue;
+	private BankEnumMapperValue bankInfo;
 
 	public BankAccountDto(BankAccount bankAccount) {
 		this.id = bankAccount.getId();
@@ -27,7 +27,7 @@ public class BankAccountDto {
 		this.bank = bankAccount.getBank();
 
 		if (this.bank != null) {
-			this.bankValue = new BankEnumMapperValue(this.bank);
+			this.bankInfo = new BankEnumMapperValue(this.bank);
 		}
 
 	}

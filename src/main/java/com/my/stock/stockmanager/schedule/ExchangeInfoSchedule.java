@@ -25,7 +25,7 @@ public class ExchangeInfoSchedule {
 	private final ExchangeRateRepository exchangeRateRepository;
 
 	@Async
-	@Scheduled(fixedRate = 1000 * 10 * 30)
+	@Scheduled(fixedRate = 1000 * 60 * 30)
 	public void scheduleFixedExchangeDollarRateTask() throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new JavaTimeModule());

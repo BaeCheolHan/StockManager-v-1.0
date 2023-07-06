@@ -10,6 +10,6 @@ public class AccountInfoDto {
 	private String alias;
 	private Bank bank;
 
-	private BankEnumMapperValue bankValue;
+	private BankEnumMapperValue bankInfo;
 	private List<Stock> stocks;
 }
