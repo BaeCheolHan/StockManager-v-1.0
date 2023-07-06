@@ -1,6 +1,7 @@
-package com.my.stock.stockmanager.dto.bank.account;
+package com.my.stock.stockmanager.dto.bank.account.response;
 
 import com.my.stock.stockmanager.constants.Bank;
+import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

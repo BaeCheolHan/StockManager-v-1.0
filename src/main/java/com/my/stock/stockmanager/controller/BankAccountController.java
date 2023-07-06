@@ -5,13 +5,11 @@ import com.my.stock.stockmanager.base.response.bank.accunt.BankAccountResponse;
 import com.my.stock.stockmanager.constants.Bank;
 import com.my.stock.stockmanager.constants.BankType;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
-import com.my.stock.stockmanager.rdb.dto.request.BankAccountSaveRequest;
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
+import com.my.stock.stockmanager.dto.bank.account.request.BankAccountSaveRequest;
 import com.my.stock.stockmanager.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping("/api")
 public class BankAccountController {
 	private final BankAccountService bankAccountService;

@@ -1,9 +1,9 @@
 package com.my.stock.stockmanager.service;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.exception.StockManagerException;
-import com.my.stock.stockmanager.rdb.dto.request.BankAccountSaveRequest;
+import com.my.stock.stockmanager.dto.bank.account.request.BankAccountSaveRequest;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;

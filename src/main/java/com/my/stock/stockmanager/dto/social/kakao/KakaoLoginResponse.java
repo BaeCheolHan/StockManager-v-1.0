@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.dto.social.kakao;
 
-import com.my.stock.stockmanager.dto.bank.account.BankAccountDto;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import lombok.*;
 

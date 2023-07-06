@@ -2,7 +2,7 @@ package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.member.MemberResponse;
+import com.my.stock.stockmanager.dto.member.response.MemberResponse;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.service.MemberService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.rdb.dto.request;
+package com.my.stock.stockmanager.dto.bank.account.request;
 
 import com.my.stock.stockmanager.constants.Bank;
 import lombok.AllArgsConstructor;

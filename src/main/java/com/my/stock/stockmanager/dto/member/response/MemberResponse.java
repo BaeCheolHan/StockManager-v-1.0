@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.dto.member;
+package com.my.stock.stockmanager.dto.member.response;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;

@@ -1,19 +1,8 @@
 package com.my.stock.stockmanager.schedule;
 
-import com.my.stock.stockmanager.dto.kis.KisToken;
-import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
-import com.my.stock.stockmanager.global.infra.ApiCaller;
-import com.my.stock.stockmanager.utils.KisTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 
 @Service
 @Slf4j
