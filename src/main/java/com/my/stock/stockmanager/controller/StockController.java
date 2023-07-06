@@ -1,14 +1,13 @@
 package com.my.stock.stockmanager.controller;
 
+import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
+import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +22,11 @@ public class StockController {
 	public DashboardStockResponse getStocks(@PathVariable Long memberId, @PathVariable(required = false) Long bankId) {
 		List<DashboardStock> data = service.getStocks(memberId, bankId);
 		return DashboardStockResponse.builder().stocks(data).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+	}
+
+	@PostMapping
+	public BaseResponse saveStock(@RequestBody StockSaveRequest request) {
+		service.saveStock(request);
+		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 }
