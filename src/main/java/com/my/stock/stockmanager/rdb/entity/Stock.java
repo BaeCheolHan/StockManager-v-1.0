@@ -20,9 +20,9 @@ public class Stock extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String symbol;
 	@Column(nullable = false)
-	private long quantity;
+	private double quantity;
 	@Column(nullable = false)
-	private long price;
+	private double price;
 
 	@ManyToOne
 	private BankAccount bankAccount;

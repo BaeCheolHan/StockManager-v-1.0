@@ -8,6 +8,6 @@ import lombok.Setter;
 public class StockSaveRequest {
 	private Long bankId;
 	private String symbol;
-	private Long quantity;
-	private Long price;
+	private Double quantity;
+	private Double price;
 }

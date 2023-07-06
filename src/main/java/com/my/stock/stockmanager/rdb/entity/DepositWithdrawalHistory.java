@@ -18,7 +18,7 @@ public class DepositWithdrawalHistory extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int amount;
+    private double amount;
 
     private String memo;
 
