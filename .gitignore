@@ -38,3 +38,9 @@ out/
 
 application*.yml
 *.xlsx
+
+
+git_toolbox_prj.xml
+modules.xml
+StockManager-private.iml
+vcs.xml
