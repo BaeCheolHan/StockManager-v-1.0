@@ -35,13 +35,19 @@ public class StockService {
 		final double totalInvestmentAmount = stocks.stream()
 				.mapToDouble(it -> {
 					if (!it.getNational().equals("KR")) {
-						return it.getAvgPrice() * it.getQuantity() * exchangeRateList.get(exchangeRateList.size() -1).getBasePrice();
+						return it.getAvgPrice() * it.getQuantity() * exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice();
 					} else {
 						return it.getAvgPrice() * it.getQuantity();
 					}
 				}).sum();
 
-		stocks.forEach(stock -> stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0));
+		stocks.forEach(stock -> {
+			if (!stock.getNational().equals("KR")) {
+				stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity() * exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()) / totalInvestmentAmount * 100.0);
+			} else {
+				stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0);
+			}
+		});
 		return stocks.stream().sorted(Comparator.comparing(DashboardStock::getPriceImportance).reversed()).collect(Collectors.toList());
 	}
 
