@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.constants.SnsType;
 import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
-import com.my.stock.stockmanager.dto.social.kakao.KakaoLoginResponse;
+import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;

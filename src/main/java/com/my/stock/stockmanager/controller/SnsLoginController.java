@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.controller;
 
-import com.my.stock.stockmanager.dto.social.kakao.KakaoLoginResponse;
+import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.service.SnsLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

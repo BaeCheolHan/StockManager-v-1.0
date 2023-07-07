@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.rdb.entity;
 
-import com.my.stock.stockmanager.base.response.entity.BaseTimeEntity;
+import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
 import com.my.stock.stockmanager.constants.SnsType;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.base.response.member.social;
+package com.my.stock.stockmanager.dto.social.kakao;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;

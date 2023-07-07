@@ -1,7 +1,7 @@
 package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
-import com.my.stock.stockmanager.base.response.bank.accunt.BankAccountResponse;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountResponse;
 import com.my.stock.stockmanager.constants.Bank;
 import com.my.stock.stockmanager.constants.BankType;
 import com.my.stock.stockmanager.constants.ResponseCode;

@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.base.response.entity;
+package com.my.stock.stockmanager.base.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

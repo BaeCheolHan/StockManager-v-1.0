@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.controller;
 
-import com.my.stock.stockmanager.base.response.member.social.KakaoLogin;
+import com.my.stock.stockmanager.dto.social.kakao.KakaoLogin;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

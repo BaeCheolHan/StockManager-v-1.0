@@ -1,8 +1,7 @@
-package com.my.stock.stockmanager.base.response.bank.accunt;
+package com.my.stock.stockmanager.dto.bank.account.response;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
