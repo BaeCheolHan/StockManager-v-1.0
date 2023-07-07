@@ -27,11 +27,11 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 		QBankAccount bankAccount = QBankAccount.bankAccount;
 		BooleanBuilder builder = new BooleanBuilder();
 		if(memberId != null) {
-			builder.and(stock.bankAccount.member.id.eq(memberId));
+			builder.and(bankAccount.member.id.eq(memberId));
 		}
 
 		if(bankId != null) {
-			builder.and(stock.bankAccount.id.eq(bankId));
+			builder.and(bankAccount.id.eq(bankId));
 		}
 
 		return queryFactory.from(stock)
@@ -44,7 +44,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 						stock.quantity.sum().as("quantity")
 						))
 				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
-				.innerJoin(bankAccount)
+				.innerJoin(bankAccount).on(stock.bankAccount.id.eq(bankAccount.id))
 				.where(builder)
 				.orderBy(stock.quantity.asc())
 				.groupBy(stock.symbol)
