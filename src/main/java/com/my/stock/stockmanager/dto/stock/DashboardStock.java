@@ -14,4 +14,5 @@ public class DashboardStock {
 	private String name;
 	private Double avgPrice;
 	private Double quantity;
+	private Double priceImportance;
 }

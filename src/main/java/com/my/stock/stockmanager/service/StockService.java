@@ -24,7 +24,11 @@ public class StockService {
 	private final BankAccountRepository bankAccountRepository;
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
-		return stockRepository.findAllDashboardStock(memberId, bankId);
+		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
+		final double totalInvestmentAmount = stocks.stream().mapToDouble(it ->it.getAvgPrice() * it.getQuantity()).sum();
+
+		stocks.forEach(stock -> stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0));
+		return stocks;
 	}
 
 	@Transactional
