@@ -40,7 +40,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 						stocks.code,
 						stocks.national,
 						stocks.name,
-						stock.price.avg().as("avgPrice"),
+						stock.price.multiply(stock.quantity).sum().divide(stock.quantity.sum()).as("avgPrice"),
 						stock.quantity.sum().as("quantity")
 						))
 				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
