@@ -31,8 +31,6 @@ public class ApiCaller {
 	private ApiCaller() {
 	}
 
-
-
 	public String get(String url, HashMap<String, Object> params) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		UriComponentsBuilder ucb = getUriComponentBuilder(new URL(url));
