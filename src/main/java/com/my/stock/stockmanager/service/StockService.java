@@ -10,12 +10,20 @@ import com.my.stock.stockmanager.rdb.entity.Stock;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.StockRepository;
+import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
+import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
+import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
+import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +35,10 @@ public class StockService {
 	private final ExchangeRateRepository exchangeRateRepository;
 
 	private final BankAccountRepository bankAccountRepository;
+
+	private final KrNowStockPriceRepository krNowStockPriceRepository;
+
+	private final OverSeaNowStockPriceRepository overSeaNowStockPriceRepository;
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
@@ -44,8 +56,25 @@ public class StockService {
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
 				stock.setPriceImportance((stock.getAvgPrice() * exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0);
+				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
+				entity.ifPresent(it ->{
+					stock.setNowPrice(it.getLast());
+					BigDecimal nowPrice1 = BigDecimal.valueOf(it.getLast());
+					BigDecimal avgPrice = BigDecimal.valueOf(stock.getAvgPrice());
+
+					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+							.multiply(BigDecimal.valueOf(100)).toString());
+				});
 			} else {
 				stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0);
+				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
+				entity.ifPresent(it -> {
+					stock.setNowPrice(it.getStck_prpr());
+					BigDecimal nowPrice1 = BigDecimal.valueOf(it.getStck_prpr());
+					BigDecimal avgPrice = BigDecimal.valueOf(stock.getAvgPrice());
+					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+							.multiply(BigDecimal.valueOf(100)).toString());
+				});
 			}
 		});
 		return stocks.stream().sorted(Comparator.comparing(DashboardStock::getPriceImportance).reversed()).collect(Collectors.toList());

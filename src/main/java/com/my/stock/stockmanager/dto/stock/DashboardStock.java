@@ -15,4 +15,8 @@ public class DashboardStock {
 	private Double avgPrice;
 	private Double quantity;
 	private Double priceImportance;
+	// 주식 현재가
+	private Double nowPrice;
+
+	private String rateOfReturnPer;
 }
