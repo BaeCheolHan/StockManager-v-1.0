@@ -162,6 +162,7 @@ public class StockService {
 					.per(entity.getPerx())
 					.eps(entity.getEpsx())
 					.bps(entity.getEpsx())
+					.stocks(stocks)
 					.build();
 		}
 	}
