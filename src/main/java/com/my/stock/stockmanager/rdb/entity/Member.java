@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.rdb.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
 import com.my.stock.stockmanager.constants.SnsType;
 import jakarta.persistence.*;
@@ -30,6 +31,7 @@ public class Member extends BaseTimeEntity {
 
     private String password;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<BankAccount> bankAccount;
 

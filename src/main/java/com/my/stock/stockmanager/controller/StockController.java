@@ -5,6 +5,8 @@ import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
+import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
+import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,18 @@ public class StockController {
 	@PostMapping
 	public BaseResponse saveStock(@RequestBody StockSaveRequest request) {
 		service.saveStock(request);
+		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	}
+
+	@GetMapping("/{memberId}/{national}/{code}/{symbol}")
+	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, @PathVariable String symbol) {
+		DetailStockInfo detail = service.getDetail(memberId, national, code, symbol);
+		return DetailStockInfoResponse.builder().detail(detail).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+	}
+
+	@DeleteMapping("/{id}")
+	public BaseResponse deleteStock(@PathVariable Long id) {
+		service.deleteById(id);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 }

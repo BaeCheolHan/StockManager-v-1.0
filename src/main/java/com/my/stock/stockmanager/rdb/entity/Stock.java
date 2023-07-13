@@ -1,6 +1,7 @@
 package com.my.stock.stockmanager.rdb.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,7 @@ public class Stock extends BaseTimeEntity {
 	@Column(nullable = false)
 	private double price;
 
+	@JsonBackReference
 	@ManyToOne
 	private BankAccount bankAccount;
 
