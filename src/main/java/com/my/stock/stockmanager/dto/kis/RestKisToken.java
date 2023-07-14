@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KisToken {
+public class RestKisToken {
 	private String access_token;
 	private String access_token_token_expired;
 	private String token_type;

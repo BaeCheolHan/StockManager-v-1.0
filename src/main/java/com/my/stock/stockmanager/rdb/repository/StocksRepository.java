@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StocksRepository extends JpaRepository<Stocks, String> {
@@ -15,4 +16,6 @@ public interface StocksRepository extends JpaRepository<Stocks, String> {
 	List<String> findCodeByNationalGroupByCode(@Param("national")String national);
 
 	List<Stocks> findAllByCode(String code);
+
+	Optional<Stocks> findBySymbol(String symbol);
 }

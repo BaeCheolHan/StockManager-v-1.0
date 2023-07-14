@@ -1,24 +1,25 @@
 package com.my.stock.stockmanager.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.constants.ResponseCode;
+import com.my.stock.stockmanager.dto.kis.RestKisToken;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
+import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
+import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
-import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
-import com.my.stock.stockmanager.rdb.entity.Member;
-import com.my.stock.stockmanager.rdb.entity.Stock;
-import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
-import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
-import com.my.stock.stockmanager.rdb.repository.MemberRepository;
-import com.my.stock.stockmanager.rdb.repository.StockRepository;
+import com.my.stock.stockmanager.rdb.entity.*;
+import com.my.stock.stockmanager.rdb.repository.*;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
+import com.my.stock.stockmanager.utils.KisTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StockService {
+	@Value("${api.kis.appKey}")
+	private String appKey;
+	@Value("${api.kis.app-secret}")
+	private String appSecret;
 
 	private final StockRepository stockRepository;
 
@@ -44,6 +49,10 @@ public class StockService {
 	private final OverSeaNowStockPriceRepository overSeaNowStockPriceRepository;
 
 	private final MemberRepository memberRepository;
+
+	private final StocksRepository stocksRepository;
+
+	private final KisTokenProvider kisTokenProvider;
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
@@ -96,11 +105,11 @@ public class StockService {
 	}
 
 	@Transactional
-	public void saveStock(StockSaveRequest request) {
+	public void saveStock(StockSaveRequest request) throws Exception {
 		BankAccount account = bankAccountRepository.findById(request.getBankId())
 				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
 
-		int existedStock = stockRepository.countBySymbol(request.getSymbol());
+		Optional<Stock> existedStock = stockRepository.findFirstBySymbol(request.getSymbol());
 
 		Stock stock = new Stock();
 		stock.setBankAccount(account);
@@ -109,10 +118,56 @@ public class StockService {
 		stock.setQuantity(request.getQuantity());
 		stockRepository.save(stock);
 
-		if (existedStock == 0) {
-			requestBatchRun();
+		if (existedStock.isEmpty()) {
+			setNowPrice(request);
 		}
 
+	}
+
+	private void setNowPrice(StockSaveRequest request) throws Exception {
+		Stocks stocks = stocksRepository.findBySymbol(request.getSymbol())
+				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+
+		if (!stocks.getNational().equals("KR")) {
+			RestKisToken kisToken = kisTokenProvider.getRestToken();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("authorization", kisToken.getToken_type() + " " + kisToken.getAccess_token());
+			headers.add("content-type", "application/json; charset=utf-8");
+			headers.add("appkey", appKey);
+			headers.add("appsecret", appSecret);
+			headers.add("tr_id", "HHDFS76200200");
+			headers.add("custtype", "P");
+
+			HashMap<String, Object> param = new HashMap<>();
+			param.put("AUTH", "");
+			param.put("EXCD", stocks.getCode());
+			param.put("SYMB", stocks.getSymbol());
+			OverSeaNowStockPriceWrapper response = new ObjectMapper().readValue(ApiCaller.getInstance()
+							.get("https://openapi.koreainvestment.com:9443/uapi/overseas-price/v1/quotations/price-detail", headers, param)
+					, OverSeaNowStockPriceWrapper.class);
+
+			Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(response.getOutput().getRsym());
+			entity.ifPresent(overSeaNowStockPriceRepository::delete);
+			overSeaNowStockPriceRepository.save(response.getOutput());
+		} else {
+			RestKisToken kisToken = kisTokenProvider.getRestToken();
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("authorization", kisToken.getToken_type() + " " + kisToken.getAccess_token());
+			headers.add("content-type", "application/json; charset=utf-8");
+			headers.add("appkey", appKey);
+			headers.add("appsecret", appSecret);
+			headers.add("tr_id", "FHKST01010100");
+
+			HashMap<String, Object> param = new HashMap<>();
+			param.put("FID_COND_MRKT_DIV_CODE", "J");
+			param.put("FID_INPUT_ISCD", stocks.getSymbol());
+			KrNowStockPriceWrapper response = new ObjectMapper().readValue(ApiCaller.getInstance()
+							.get("https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price", headers, param)
+					, KrNowStockPriceWrapper.class);
+			Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(response.getOutput().getStck_shrn_iscd());
+			entity.ifPresent(krNowStockPriceRepository::delete);
+			krNowStockPriceRepository.save(response.getOutput());
+		}
 	}
 
 	@Transactional

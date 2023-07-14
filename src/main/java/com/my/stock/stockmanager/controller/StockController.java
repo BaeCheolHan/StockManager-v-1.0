@@ -27,7 +27,7 @@ public class StockController {
 	}
 
 	@PostMapping
-	public BaseResponse saveStock(@RequestBody StockSaveRequest request) {
+	public BaseResponse saveStock(@RequestBody StockSaveRequest request) throws Exception {
 		service.saveStock(request);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}

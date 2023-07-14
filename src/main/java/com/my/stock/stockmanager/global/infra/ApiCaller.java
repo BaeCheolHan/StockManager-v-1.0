@@ -41,6 +41,16 @@ public class ApiCaller {
 		return responseEntity.getBody();
 	}
 
+	public String get(String url, HttpHeaders headers, HashMap<String, Object> params) throws IOException {
+		RestTemplate restTemplate = new RestTemplate();
+		UriComponentsBuilder ucb = getUriComponentBuilder(new URL(url));
+		if (params != null) params.forEach(ucb::queryParam);
+
+		UriComponents uc = ucb.build().encode();
+		ResponseEntity<String> responseEntity = restTemplate.exchange(uc.toUri(), HttpMethod.GET, new HttpEntity<String>(headers), String.class);
+		return responseEntity.getBody();
+	}
+
 	public String post(String url, HashMap<String, Object> param) throws Exception {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.setConnectTimeout(Duration.ofSeconds(10))
