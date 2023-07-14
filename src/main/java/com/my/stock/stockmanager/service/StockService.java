@@ -5,6 +5,7 @@ import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import com.my.stock.stockmanager.rdb.entity.Member;
@@ -21,12 +22,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,6 +88,15 @@ public class StockService {
 	public void saveStock(StockSaveRequest request) {
 		BankAccount account = bankAccountRepository.findById(request.getBankId())
 				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+
+		if(stockRepository.countBySymbol(request.getSymbol()) == 0) {
+			try {
+				ApiCaller.getInstance().get("http://localhost:18082/batch/run/NowKrStockPriceGettingJob", new HashMap<>());
+				ApiCaller.getInstance().get("http://localhost:18082/batch/run/ToNightOverSeaStockPriceGettingJob", new HashMap<>());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		};
 
 		Stock stock = new Stock();
 		stock.setBankAccount(account);
