@@ -19,6 +19,7 @@ import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,19 +85,22 @@ public class StockService {
 		return stocks.stream().sorted(Comparator.comparing(DashboardStock::getPriceImportance).reversed()).collect(Collectors.toList());
 	}
 
+	@Async("asyncTaskExecutor")
+	public void requestBatchRun() {
+		try {
+			ApiCaller.getInstance().get("http://127.0.0.1:18082/batch/run/NowKrStockPriceGettingJob", new HashMap<>());
+			ApiCaller.getInstance().get("http://127.0.0.1:18082/batch/run/ToNightOverSeaStockPriceGettingJob", new HashMap<>());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Transactional
 	public void saveStock(StockSaveRequest request) {
 		BankAccount account = bankAccountRepository.findById(request.getBankId())
 				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
 
-		if(stockRepository.countBySymbol(request.getSymbol()) == 0) {
-			try {
-				ApiCaller.getInstance().get("http://localhost:18082/batch/run/NowKrStockPriceGettingJob", new HashMap<>());
-				ApiCaller.getInstance().get("http://localhost:18082/batch/run/ToNightOverSeaStockPriceGettingJob", new HashMap<>());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		};
+		int existedStock = stockRepository.countBySymbol(request.getSymbol());
 
 		Stock stock = new Stock();
 		stock.setBankAccount(account);
@@ -104,6 +108,11 @@ public class StockService {
 		stock.setSymbol(request.getSymbol());
 		stock.setQuantity(request.getQuantity());
 		stockRepository.save(stock);
+
+		if (existedStock == 0) {
+			requestBatchRun();
+		}
+
 	}
 
 	@Transactional
