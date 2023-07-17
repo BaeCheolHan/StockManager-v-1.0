@@ -20,11 +20,9 @@ import com.my.stock.stockmanager.utils.KisTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -58,50 +56,43 @@ public class StockService {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
 
-		final double totalInvestmentAmount = stocks.stream()
-				.mapToDouble(it -> {
+		final BigDecimal totalInvestmentAmount = stocks.stream()
+				.map(it -> {
 					if (!it.getNational().equals("KR")) {
-						return it.getAvgPrice() * exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice() * it.getQuantity();
+						return it.getAvgPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
 					} else {
-						return it.getAvgPrice() * it.getQuantity();
+						return it.getAvgPrice().multiply(it.getQuantity());
 					}
-				}).sum();
+				}).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
-				stock.setPriceImportance((stock.getAvgPrice() * exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0);
+				stock.setPriceImportance(
+						stock.getAvgPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(stock.getQuantity())
+								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)));
+
 				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getLast());
-					BigDecimal nowPrice1 = BigDecimal.valueOf(it.getLast());
-					BigDecimal avgPrice = BigDecimal.valueOf(stock.getAvgPrice());
+					BigDecimal nowPrice1 = it.getLast();
+					BigDecimal avgPrice = stock.getAvgPrice();
 
 					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100)).toString());
 				});
 			} else {
-				stock.setPriceImportance((stock.getAvgPrice() * stock.getQuantity()) / totalInvestmentAmount * 100.0);
+				stock.setPriceImportance((stock.getAvgPrice().multiply(stock.getQuantity())).divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)));
 				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getStck_prpr());
-					BigDecimal nowPrice1 = BigDecimal.valueOf(it.getStck_prpr());
-					BigDecimal avgPrice = BigDecimal.valueOf(stock.getAvgPrice());
+					BigDecimal nowPrice1 = it.getStck_prpr();
+					BigDecimal avgPrice = stock.getAvgPrice();
 					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100)).toString());
 				});
 			}
 		});
 		return stocks.stream().sorted(Comparator.comparing(DashboardStock::getPriceImportance).reversed()).collect(Collectors.toList());
-	}
-
-	@Async("asyncTaskExecutor")
-	public void requestBatchRun() {
-		try {
-			ApiCaller.getInstance().get("http://127.0.0.1:18082/batch/run/NowKrStockPriceGettingJob", new HashMap<>());
-			ApiCaller.getInstance().get("http://127.0.0.1:18082/batch/run/ToNightOverSeaStockPriceGettingJob", new HashMap<>());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Transactional
@@ -171,7 +162,7 @@ public class StockService {
 	}
 
 	@Transactional
-	public DetailStockInfo getDetail(Long memberId, String national, String code, String symbol) {
+	public DetailStockInfo getDetail(Long memberId, String national, String code, String symbol) throws StockManagerException {
 
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
@@ -210,14 +201,14 @@ public class StockService {
 			OverSeaNowStockPrice entity = overSeaNowStockPriceRepository.findById("D".concat(code).concat(symbol))
 					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 
-			BigDecimal base = BigDecimal.valueOf(entity.getBase());
-			BigDecimal last = BigDecimal.valueOf(entity.getLast());
-			Double compareToYesterday = Double.valueOf(base.subtract(last).toString());
+			BigDecimal base = entity.getBase();
+			BigDecimal last = entity.getLast();
+			BigDecimal compareToYesterday = base.subtract(last);
 
 			String sign = "";
-			if (compareToYesterday > 0) {
+			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
 				sign = "plus";
-			} else if (compareToYesterday == 0) {
+			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
 				sign = "done";
 			} else {
 				sign = "minus";

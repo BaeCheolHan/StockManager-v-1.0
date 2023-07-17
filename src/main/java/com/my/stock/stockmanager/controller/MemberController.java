@@ -3,6 +3,7 @@ package com.my.stock.stockmanager.controller;
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.member.response.MemberResponse;
+import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class MemberController {
 	}
 
 	@GetMapping
-	public MemberResponse find(Long id) {
+	public MemberResponse find(Long id) throws StockManagerException {
 		Member entity = memberService.findById(id);
 		return MemberResponse.builder().code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).data(entity).build();
 	}

@@ -4,7 +4,7 @@ import com.my.stock.stockmanager.constants.ResponseCode;
 import lombok.Getter;
 
 @Getter
-public class StockManagerException extends RuntimeException {
+public class StockManagerException extends Exception {
 
 	private final ResponseCode code;
 

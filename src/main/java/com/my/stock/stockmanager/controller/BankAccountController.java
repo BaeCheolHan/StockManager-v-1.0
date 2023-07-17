@@ -8,6 +8,7 @@ import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
 import com.my.stock.stockmanager.dto.bank.account.request.BankAccountSaveRequest;
+import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,19 +24,19 @@ public class BankAccountController {
 	private final BankAccountService bankAccountService;
 
 	@PostMapping("/account")
-	public BaseResponse save(@RequestBody BankAccountSaveRequest request) {
+	public BaseResponse save(@RequestBody BankAccountSaveRequest request) throws StockManagerException {
 		bankAccountService.save(request);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
 	@GetMapping("/bank/member/{memberId}")
-	public BankAccountResponse findBankAccountByMemberId(@PathVariable Long memberId) {
+	public BankAccountResponse findBankAccountByMemberId(@PathVariable Long memberId) throws StockManagerException {
 		List<BankAccountDto> accounts = bankAccountService.findBankAccountByMemberId(memberId);
 		return new BankAccountResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), accounts);
 	}
 
 	@GetMapping("/bank")
-	public void find(Long id) {
+	public void find(Long id) throws StockManagerException {
 		bankAccountService.findById(id);
 	}
 

@@ -17,7 +17,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member findById(Long id) {
+	public Member findById(Long id) throws StockManagerException {
 		return memberRepository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 	}
 }

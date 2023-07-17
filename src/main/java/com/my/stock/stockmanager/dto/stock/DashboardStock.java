@@ -2,6 +2,8 @@ package com.my.stock.stockmanager.dto.stock;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -12,11 +14,11 @@ public class DashboardStock {
 	private String code;
 	private String national;
 	private String name;
-	private Double avgPrice;
-	private Double quantity;
-	private Double priceImportance;
+	private BigDecimal avgPrice;
+	private BigDecimal quantity;
+	private BigDecimal priceImportance;
 	// 주식 현재가
-	private Double nowPrice;
+	private BigDecimal nowPrice;
 
 	private String rateOfReturnPer;
 }

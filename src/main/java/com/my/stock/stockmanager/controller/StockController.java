@@ -7,6 +7,7 @@ import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
+import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class StockController {
 	}
 
 	@GetMapping("/{memberId}/{national}/{code}/{symbol}")
-	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, @PathVariable String symbol) {
+	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, @PathVariable String symbol) throws StockManagerException {
 		DetailStockInfo detail = service.getDetail(memberId, national, code, symbol);
 		return DetailStockInfoResponse.builder().detail(detail).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
 	}

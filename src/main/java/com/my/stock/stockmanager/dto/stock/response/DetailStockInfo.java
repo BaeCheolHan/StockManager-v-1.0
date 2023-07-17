@@ -4,20 +4,21 @@ import com.my.stock.stockmanager.rdb.entity.Stock;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Builder
 public class DetailStockInfo {
-	private Double startPrice;
-	private Double highPrice;
-	private Double lowPrice;
-	private Double nowPrice;
-	private Double compareToYesterday;
+	private BigDecimal startPrice;
+	private BigDecimal highPrice;
+	private BigDecimal lowPrice;
+	private BigDecimal nowPrice;
+	private BigDecimal compareToYesterday;
 	private String compareToYesterdaySign;
-	private Double per;
-	private Double pbr;
-	private Double eps;
-	private Double bps;
+	private BigDecimal per;
+	private BigDecimal pbr;
+	private BigDecimal eps;
+	private BigDecimal bps;
 	private List<Stock> stocks;
 }

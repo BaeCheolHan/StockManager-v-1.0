@@ -6,6 +6,8 @@ import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @Entity
@@ -21,9 +23,9 @@ public class Stock extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String symbol;
 	@Column(nullable = false)
-	private double quantity;
+	private BigDecimal quantity;
 	@Column(nullable = false)
-	private double price;
+	private BigDecimal price;
 
 	@JsonBackReference
 	@ManyToOne

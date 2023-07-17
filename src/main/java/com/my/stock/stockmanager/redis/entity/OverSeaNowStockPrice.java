@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @RedisHash("OverSeaNowStockPrice")
@@ -24,41 +26,41 @@ public class OverSeaNowStockPrice {
 	//통화
 	private String curr;
 	// 매매단위
-	private Double vnit;
+	private BigDecimal vnit;
 	// 시가(해당일 최초 거래가격)
-	private Double open;
+	private BigDecimal open;
 	// 고가(해당일 가장 높은 거래가격)
-	private Double high;
+	private BigDecimal high;
 	// 저가(해당일 가장 낮은 거래가격)
-	private Double low;
+	private BigDecimal low;
 	// 현재가
-	private Double last;
+	private BigDecimal last;
 	// 전일종가
-	private Double base;
+	private BigDecimal base;
 	// 전일 거래량
 	private Long pvol;
 	//전일거래대금
-	private Double pamt;
+	private BigDecimal pamt;
 	// 상한가
-	private Double uplp;
+	private BigDecimal uplp;
 	// 하한가
-	private Double dnlp;
+	private BigDecimal dnlp;
 	// 52주최고가
-	private Double h52p;
+	private BigDecimal h52p;
 	// 52주최고일자
 	private String h52d;
 	// 52주최저가
-	private Double l52p;
+	private BigDecimal l52p;
 	// 52주최저일자
 	private String l52d;
 	// PER
-	private Double perx;
+	private BigDecimal perx;
 	// PBR
-	private Double pbrx;
+	private BigDecimal pbrx;
 	//EPS
-	private Double epsx;
+	private BigDecimal epsx;
 	//BPS
-	private Double bpsx;
+	private BigDecimal bpsx;
 
 	// 상장주수
 	private Long shar;
@@ -67,21 +69,21 @@ public class OverSeaNowStockPrice {
 	// 시가총액
 	private Long tomv;
 	// 원환산당일가격
-	private Double t_xprc;
+	private BigDecimal t_xprc;
 	//원환산당일대비
-	private Double t_xdif;
+	private BigDecimal t_xdif;
 	// 원환산당일등락
-	private Double t_xrat;
+	private BigDecimal t_xrat;
 	// 원환산전일가격
-	private Double p_xprc;
+	private BigDecimal p_xprc;
 	// 원환산전일대비
-	private Double p_xdif;
+	private BigDecimal p_xdif;
 	// 원환산전일등락
-	private Double p_xrat;
+	private BigDecimal p_xrat;
 	// 당일환율
-	private Double t_rate;
+	private BigDecimal t_rate;
 	// 전일환율
-	private Double p_rate;
+	private BigDecimal p_rate;
 	// 원환산당일기호
 	private String t_xsgn;
 	// 원환산전일기호
@@ -89,15 +91,15 @@ public class OverSeaNowStockPrice {
 	// 거래가능여부
 	private String e_ordyn;
 	// 호가단위
-	private Double e_hogau;
+	private BigDecimal e_hogau;
 	// 업종(섹터)
 	private String e_icod;
 	// 액면가
-	private Double e_parp;
+	private BigDecimal e_parp;
 	// 거래량
-	private Double tvol;
+	private BigDecimal tvol;
 	// 거래대금
-	private Double tamt;
+	private BigDecimal tamt;
 	// ETP 분류명
 	private String etyp_nm;
 

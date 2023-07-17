@@ -22,7 +22,7 @@ public class BankAccountService {
 	private final MemberRepository memberRepository;
 
 	@Transactional
-	public void save(BankAccountSaveRequest request) {
+	public void save(BankAccountSaveRequest request) throws StockManagerException {
 		Member memberEntity = memberRepository.findById(request.getMemberId()).orElseThrow(() -> new StockManagerException("존재하지 않는 사용자 식별키입니다.", ResponseCode.NOT_FOUND_ID));
 		BankAccount account = new BankAccount();
 		account.setBank(request.getBank());
@@ -31,14 +31,14 @@ public class BankAccountService {
 		bankAccountRepository.save(account);
 	}
 
-	public BankAccount findById(Long id) {
+	public BankAccount findById(Long id) throws StockManagerException {
 		BankAccount account = bankAccountRepository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 		return null;
 
 	}
 
 	@Transactional
-	public List<BankAccountDto> findBankAccountByMemberId(Long memberId) {
+	public List<BankAccountDto> findBankAccountByMemberId(Long memberId) throws StockManagerException {
 		Member memberEntity = memberRepository.findById(memberId).orElseThrow(() -> new StockManagerException("존재하지 않는 사용자 식별키입니다.", ResponseCode.NOT_FOUND_ID));
 		return memberEntity.getBankAccount().stream().map(BankAccountDto::new).collect(Collectors.toList());
 	}

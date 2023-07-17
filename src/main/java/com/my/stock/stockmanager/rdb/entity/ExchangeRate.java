@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @Entity
@@ -25,32 +27,32 @@ public class ExchangeRate {
 	private String date;
 	private String time;
 	private int recurrenceCount;
-	private Double basePrice;
-	private Double openingPrice;
-	private Double highPrice;
-	private Double lowPrice;
+	private BigDecimal basePrice;
+	private BigDecimal openingPrice;
+	private BigDecimal highPrice;
+	private BigDecimal lowPrice;
 	@Column(name="\"change\"")
 	private String change;
-	private Double changePrice;
-	private Double cashBuyingPrice;
-	private Double cashSellingPrice;
-	private Double ttBuyingPrice;
-	private Double ttSellingPrice;
-	private Double tcBuyingPrice;
-	private Double fcSellingPrice;
-	private Double exchangeCommission;
-	private Double usDollarRate;
-	private Double high52wPrice;
+	private BigDecimal changePrice;
+	private BigDecimal cashBuyingPrice;
+	private BigDecimal cashSellingPrice;
+	private BigDecimal ttBuyingPrice;
+	private BigDecimal ttSellingPrice;
+	private BigDecimal tcBuyingPrice;
+	private BigDecimal fcSellingPrice;
+	private BigDecimal exchangeCommission;
+	private BigDecimal usDollarRate;
+	private BigDecimal high52wPrice;
 	private String high52wDate;
-	private Double low52wPrice;
+	private BigDecimal low52wPrice;
 	private String low52wDate;
 	private int currencyUnit;
 	private String provider;
 	private long timestamp;
 	private String createdAt;
 	private String modifiedAt;
-	private Double signedChangePrice;
-	private Double signedChangeRate;
-	private Double changeRate;
+	private BigDecimal signedChangePrice;
+	private BigDecimal signedChangeRate;
+	private BigDecimal changeRate;
 
 }

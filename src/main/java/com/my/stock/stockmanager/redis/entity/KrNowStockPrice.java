@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @RedisHash("KrNowStockPrice")
@@ -14,7 +16,7 @@ public class KrNowStockPrice {
 	private String stck_shrn_iscd;
 
 	// 주식 현재가
-	private Double stck_prpr;
+	private BigDecimal stck_prpr;
 
 	//    종목 상태 구분 코드
 //    00 : 그외
@@ -29,7 +31,7 @@ public class KrNowStockPrice {
 	private String iscd_stat_cls_code;
 
 	// 증거금 비율
-	private Double marg_rate;
+	private BigDecimal marg_rate;
 	// 대표 시장 한글 명
 	private String rprs_mrkt_kor_name;
 
@@ -59,7 +61,7 @@ public class KrNowStockPrice {
 	private String elw_pblc_yn;
 
 	// 전일 대비
-	private Double prdy_vrss;
+	private BigDecimal prdy_vrss;
 
 	//전일 대비 부호
 	//	1 : 상한
@@ -70,7 +72,7 @@ public class KrNowStockPrice {
 	private String prdy_vrss_sign;
 
 	// 전일 대비율
-	private Double prdy_ctrt;
+	private BigDecimal prdy_ctrt;
 
 	// 누적 거래 대금
 	private Long acml_tr_pbmn;
@@ -79,23 +81,23 @@ public class KrNowStockPrice {
 	private Long acml_vol;
 
 	// 전일 대비 거래량 비율
-	private Double prdy_vrss_vol_rate;
+	private BigDecimal prdy_vrss_vol_rate;
 	// 주식 시가
-	private Double stck_oprc;
+	private BigDecimal stck_oprc;
 	// 주식 최고가
-	private Double stck_hgpr;
+	private BigDecimal stck_hgpr;
 	// 주식 최저가
-	private Double stck_lwpr;
+	private BigDecimal stck_lwpr;
 	// 주식 상한가
-	private Double stck_mxpr;
+	private BigDecimal stck_mxpr;
 	// 주식 하한가
-	private Double stck_llam;
+	private BigDecimal stck_llam;
 	// 주식 기준가
-	private Double stck_sdpr;
+	private BigDecimal stck_sdpr;
 	// 가중 평균 주식 가격
-	private Double wghn_avrg_stck_prc;
+	private BigDecimal wghn_avrg_stck_prc;
 	// HTS 외국인 소진율
-	private Double hts_frgn_ehrt;
+	private BigDecimal hts_frgn_ehrt;
 	// 외국인 순매수 수량
 	private Long frgn_ntby_qty;
 	// 프로그램매매 순매수 수량
@@ -125,61 +127,61 @@ public class KrNowStockPrice {
 	// 호가단위
 	private Integer aspr_unit;
 	// HTS 매매 수량 단위 값
-	private Double hts_deal_qty_unit_val;
+	private BigDecimal hts_deal_qty_unit_val;
 	// 상장 주수
 	private Long lstn_stcn;
 	// HTS 시가총액
 	private Long hts_avls;
 	// PER
-	private Double per;
+	private BigDecimal per;
 	// PBR
-	private Double pbr;
+	private BigDecimal pbr;
 	// 결산 월
 	private String stac_month;
 	// 거래량 회전율
-	private Double vol_tnrt;
+	private BigDecimal vol_tnrt;
 	// EPS
-	private Double eps;
+	private BigDecimal eps;
 	// BPS
-	private Double bps;
+	private BigDecimal bps;
 	// 250일 최고가
-	private Double d250_hgpr;
+	private BigDecimal d250_hgpr;
 	// 250일 최고가 일자
 	private String d250_hgpr_date;
 	// 250일 최고가 대비 현재가 비율
-	private Double d250_hgpr_vrss_prpr_rate;
+	private BigDecimal d250_hgpr_vrss_prpr_rate;
 	// 250일 최저가
-	private Double d250_lwpr;
+	private BigDecimal d250_lwpr;
 	// 250일 최저가 일자
 	private String d250_lwpr_date;
 	// 250일 최저가 대비 현재가 비율
-	private Double d250_lwpr_vrss_prpr_rate;
+	private BigDecimal d250_lwpr_vrss_prpr_rate;
 	// 주식 연중 최고가
-	private Double stck_dryy_hgpr;
+	private BigDecimal stck_dryy_hgpr;
 	// 연중 최고가 대비 현재가 비율
-	private Double dryy_hgpr_vrss_prpr_rate;
+	private BigDecimal dryy_hgpr_vrss_prpr_rate;
 	// 연중 최고가 일자
 	private String dryy_hgpr_date;
 	// 주식 연중 최저가
-	private Double stck_dryy_lwpr;
+	private BigDecimal stck_dryy_lwpr;
 	// 	연중 최저가 대비 현재가 비율
-	private Double dryy_lwpr_vrss_prpr_rate;
+	private BigDecimal dryy_lwpr_vrss_prpr_rate;
 	// 연중 최저가 일자
 	private String dryy_lwpr_date;
 	// 52주일 최고가
-	private Double w52_hgpr;
+	private BigDecimal w52_hgpr;
 	// 52주일 최고가 대비 현재가 대비
-	private Double w52_hgpr_vrss_prpr_ctrt;
+	private BigDecimal w52_hgpr_vrss_prpr_ctrt;
 	// 52주일 최고가 일자
 	private String w52_hgpr_date;
 	// 52주일 최저가
-	private Double w52_lwpr;
+	private BigDecimal w52_lwpr;
 	// 52주일 최저가 대비 현재가 대비
-	private Double w52_lwpr_vrss_prpr_ctrt;
+	private BigDecimal w52_lwpr_vrss_prpr_ctrt;
 	// 52주일 최저가 일자
 	private String w52_lwpr_date;
 	// 전체 융자 잔고 비율
-	private Double whol_loan_rmnd_rate;
+	private BigDecimal whol_loan_rmnd_rate;
 	// 공매도가능여부
 	private String ssts_yn;
 	// 액면가 통화명
