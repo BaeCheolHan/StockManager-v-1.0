@@ -20,7 +20,7 @@ public class DepositWithdrawalHistory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 10, scale = 6)
+    @Column(nullable = false, precision = 24, scale = 6)
     private BigDecimal amount;
 
     private String memo;

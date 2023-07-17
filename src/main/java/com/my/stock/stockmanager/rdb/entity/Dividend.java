@@ -32,7 +32,7 @@ public class Dividend extends BaseTimeEntity {
     private int day;
 
     private String symbol;
-    @Column(nullable = false, precision = 10, scale = 6)
+    @Column(nullable = false, precision = 24, scale = 6)
     private BigDecimal dividend;
 
 
