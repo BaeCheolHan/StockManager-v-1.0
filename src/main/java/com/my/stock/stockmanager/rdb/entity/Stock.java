@@ -22,9 +22,9 @@ public class Stock extends BaseTimeEntity {
 	private Long id;
 	@Column(nullable = false)
 	private String symbol;
-	@Column(nullable = false)
+	@Column(nullable = false, precision = 10, scale = 6)
 	private BigDecimal quantity;
-	@Column(nullable = false)
+	@Column(nullable = false, precision = 10, scale = 6)
 	private BigDecimal price;
 
 	@JsonBackReference
