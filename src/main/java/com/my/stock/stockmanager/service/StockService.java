@@ -18,6 +18,7 @@ import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import com.my.stock.stockmanager.utils.KisTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.dfp.DfpField;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class StockService {
 
 	private final KisTokenProvider kisTokenProvider;
 
+
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
@@ -69,7 +71,7 @@ public class StockService {
 			if (!stock.getNational().equals("KR")) {
 				stock.setPriceImportance(
 						stock.getAvgPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(stock.getQuantity())
-								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)));
+								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.FLOOR));
 
 				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
 				entity.ifPresent(it -> {
@@ -78,17 +80,19 @@ public class StockService {
 					BigDecimal avgPrice = stock.getAvgPrice();
 
 					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
-							.multiply(BigDecimal.valueOf(100)).toString());
+							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
 			} else {
-				stock.setPriceImportance((stock.getAvgPrice().multiply(stock.getQuantity())).divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)));
+				stock.setPriceImportance((stock.getAvgPrice().multiply(stock.getQuantity())).divide(totalInvestmentAmount, RoundingMode.DOWN)
+						.multiply(BigDecimal.valueOf(100)).multiply((exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice())
+						).setScale(2, RoundingMode.FLOOR));
 				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getStck_prpr());
 					BigDecimal nowPrice1 = it.getStck_prpr();
 					BigDecimal avgPrice = stock.getAvgPrice();
 					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
-							.multiply(BigDecimal.valueOf(100)).toString());
+							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
 			}
 		});
