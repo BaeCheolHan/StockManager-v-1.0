@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,22 +43,22 @@ public class DividendService {
 
 	public List<DividendChart> getDividendChart(Long memberId) {
 		List<Integer> years = repository.findYearByMemberIdGroupByYear(memberId);
-		List<DividendSumByMonth> result = repository.findDividendChartByMemberId(memberId);
+		List<DividendSumByMonth> monthlyDividend = repository.findDividendChartByMemberId(memberId);
+
 		List<DividendChart> chartData = new ArrayList<>();
 		List<Integer> months = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 		for (Integer year : years) {
 			DividendChart dataRow = new DividendChart();
 			dataRow.setName(year.toString());
 
-			List<DividendSumByMonth> yearData = result.stream().filter(it -> it.getYear() == year).collect(Collectors.toList());
-			List<BigDecimal> monthlyDividendData = new ArrayList<>();
+			List<DividendSumByMonth> yearData = monthlyDividend.stream().filter(it -> it.getYear() == year).toList();
+			List<BigDecimal> chartSeries = new ArrayList<>();
 			for (Integer month : months) {
 				Optional<DividendSumByMonth> data = yearData.stream().filter(it -> it.getMonth() == month).findFirst();
-				log.info("year : {}, month : {}, dividend: {}", year, month, data.isPresent() ? data.get().getDividend() : BigDecimal.ZERO);
-				monthlyDividendData.add(data.isPresent() ? data.get().getDividend() : BigDecimal.ZERO);
+				chartSeries.add(data.isPresent() ? data.get().getDividend() : BigDecimal.ZERO);
 			}
 
-			dataRow.setData(monthlyDividendData);
+			dataRow.setData(chartSeries);
 			chartData.add(dataRow);
 		}
 
