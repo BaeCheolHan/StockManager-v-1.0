@@ -43,7 +43,7 @@ public class DividendService {
 
 	public List<DividendChart> getDividendChart(Long memberId) {
 		List<Integer> years = repository.findYearByMemberIdGroupByYear(memberId);
-		List<DividendSumByMonth> monthlyDividend = repository.findDividendChartByMemberId(memberId);
+		List<DividendSumByMonth> yearAndMonthlyDividend = repository.findDividendChartByMemberId(memberId);
 
 		List<DividendChart> chartData = new ArrayList<>();
 		List<Integer> months = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
@@ -51,10 +51,10 @@ public class DividendService {
 			DividendChart dataRow = new DividendChart();
 			dataRow.setName(year.toString());
 
-			List<DividendSumByMonth> yearData = monthlyDividend.stream().filter(it -> it.getYear() == year).toList();
+			List<DividendSumByMonth> annualDividendData = yearAndMonthlyDividend.stream().filter(it -> it.getYear() == year).toList();
 			List<BigDecimal> chartSeries = new ArrayList<>();
 			for (Integer month : months) {
-				Optional<DividendSumByMonth> data = yearData.stream().filter(it -> it.getMonth() == month).findFirst();
+				Optional<DividendSumByMonth> data = annualDividendData.stream().filter(it -> it.getMonth() == month).findFirst();
 				chartSeries.add(data.isPresent() ? data.get().getDividend() : BigDecimal.ZERO);
 			}
 
