@@ -33,8 +33,8 @@ public class StockController {
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
-	@GetMapping("/{memberId}/{national}/{code}/{symbol}")
-	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, @PathVariable String symbol) throws StockManagerException {
+	@GetMapping("/{memberId}/{national}/{code}")
+	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws StockManagerException {
 		DetailStockInfo detail = service.getDetail(memberId, national, code, symbol);
 		return DetailStockInfoResponse.builder().detail(detail).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
 	}
