@@ -56,22 +56,8 @@ public class StockService {
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
-
-		final BigDecimal totalInvestmentAmount = stocks.stream()
-				.map(it -> {
-					if (!it.getNational().equals("KR")) {
-						return it.getAvgPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
-					} else {
-						return it.getAvgPrice().multiply(it.getQuantity());
-					}
-				}).reduce(BigDecimal.ZERO, BigDecimal::add);
-
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
-				stock.setPriceImportance(
-						stock.getAvgPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(stock.getQuantity())
-								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.FLOOR));
-
 				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getLast());
@@ -82,9 +68,6 @@ public class StockService {
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
 			} else {
-				stock.setPriceImportance((stock.getAvgPrice().multiply(stock.getQuantity())).divide(totalInvestmentAmount, RoundingMode.DOWN)
-						.multiply(BigDecimal.valueOf(100)).multiply((exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice())
-						).setScale(2, RoundingMode.FLOOR));
 				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getStck_prpr());
@@ -93,6 +76,31 @@ public class StockService {
 					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
+
+			}
+		});
+
+
+		final BigDecimal totalInvestmentAmount = stocks.stream()
+				.map(it -> {
+					if (!it.getNational().equals("KR")) {
+						return it.getNowPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
+					} else {
+						return it.getNowPrice().multiply(it.getQuantity());
+					}
+				}).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		stocks.forEach(stock -> {
+			if (!stock.getNational().equals("KR")) {
+				stock.setPriceImportance(
+						stock.getNowPrice()
+								.multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice())
+								.multiply(stock.getQuantity())
+								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.FLOOR));
+
+			} else {
+				stock.setPriceImportance((stock.getNowPrice().multiply(stock.getQuantity())).divide(totalInvestmentAmount, RoundingMode.DOWN)
+						.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.FLOOR));
 			}
 		});
 		return stocks.stream().sorted(Comparator.comparing(DashboardStock::getPriceImportance).reversed()).collect(Collectors.toList());

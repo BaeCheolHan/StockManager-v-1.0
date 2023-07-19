@@ -62,7 +62,7 @@ public class DividendService {
 			}
 
 			dataRow.setData(chartSeries);
-			dataRow.setTotal(chartSeries.stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO).setScale(2, RoundingMode.FLOOR));
+			dataRow.setTotal(chartSeries.stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO).setScale(0, RoundingMode.FLOOR));
 			dataRow.setAvg(dataRow.getTotal()
 					.divide(String.valueOf(toDay.getYear()).equals(dataRow.getName()) ? BigDecimal.valueOf(toDay.getMonthValue()) : BigDecimal.valueOf(12), 2, RoundingMode.FLOOR)
 			);
