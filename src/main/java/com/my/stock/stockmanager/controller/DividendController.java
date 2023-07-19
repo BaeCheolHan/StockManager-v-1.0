@@ -4,6 +4,7 @@ import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
 import com.my.stock.stockmanager.dto.dividend.response.DividendChartResponse;
+import com.my.stock.stockmanager.dto.dividend.response.DividendInfoResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.DividendService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,10 @@ public class DividendController {
 	@GetMapping("/{memberId}/chart")
 	public DividendChartResponse getDividendChartByMonth(@PathVariable Long memberId) {
 		return new DividendChartResponse(dividendService.getDividendChart(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	}
+
+	@GetMapping("/member/{memberId}")
+	public DividendInfoResponse getDividends(@PathVariable Long memberId) {
+		return new DividendInfoResponse(dividendService.getDividends(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 }

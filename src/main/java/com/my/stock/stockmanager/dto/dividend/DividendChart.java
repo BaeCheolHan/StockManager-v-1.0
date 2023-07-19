@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.dto.dividend.response;
+package com.my.stock.stockmanager.dto.dividend;
 
 import lombok.Getter;
 import lombok.Setter;

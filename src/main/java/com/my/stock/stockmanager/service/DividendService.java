@@ -3,14 +3,17 @@ package com.my.stock.stockmanager.service;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
 import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
-import com.my.stock.stockmanager.dto.dividend.response.DividendChart;
+import com.my.stock.stockmanager.dto.dividend.DividendChart;
+import com.my.stock.stockmanager.dto.dividend.DividendInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.entity.Dividend;
 import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -69,13 +72,19 @@ public class DividendService {
 			chartData.add(dataRow);
 		}
 
-		for(int i = 1; i < chartData.size(); i++) {
-			BigDecimal prev = chartData.get(i -1).getAvg();
+		for (int i = 1; i < chartData.size(); i++) {
+			BigDecimal prev = chartData.get(i - 1).getAvg();
 			BigDecimal after = chartData.get(i).getAvg();
 			BigDecimal rate = after.divide(prev, 2, RoundingMode.FLOOR).subtract(BigDecimal.ONE).multiply(BigDecimal.valueOf(100));
 			chartData.get(i).setChangeRate(rate);
 		}
 
 		return chartData;
+	}
+
+	@Transactional
+	public List<DividendInfo> getDividends(Long memberId) {
+		Sort sort = Sort.by(Sort.Order.asc("year"), Sort.Order.asc("month"), Sort.Order.asc("day"));
+		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
 	}
 }
