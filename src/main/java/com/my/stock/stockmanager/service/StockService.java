@@ -18,7 +18,6 @@ import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import com.my.stock.stockmanager.utils.KisTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.math3.dfp.DfpField;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;

@@ -11,4 +11,8 @@ import java.util.List;
 public class DividendChart {
 	private String name;
 	private List<BigDecimal> data;
+	private BigDecimal total;
+	private BigDecimal avg;
+	private BigDecimal changeRate;
+
 }
