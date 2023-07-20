@@ -48,7 +48,8 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 		QStocks stocks = QStocks.stocks;
 
 		return queryFactory.from(dividend)
-				.select(Projections.fields(DividendInfo.class, dividend.id, dividend.year, dividend.month, dividend.day, dividend.symbol, dividend.dividend, stocks.code, stocks.national, stocks.national))
+				.select(Projections.fields(DividendInfo.class, dividend.id, dividend.year, dividend.month, dividend.day
+						, dividend.symbol, dividend.dividend, stocks.code, stocks.name, stocks.national))
 				.innerJoin(stocks).on(dividend.symbol.eq(stocks.symbol))
 				.where(dividend.memberId.eq(memberId))
 				.orderBy(sorts.stream()

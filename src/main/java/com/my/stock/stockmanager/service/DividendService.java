@@ -84,7 +84,7 @@ public class DividendService {
 
 	@Transactional
 	public List<DividendInfo> getDividends(Long memberId) {
-		Sort sort = Sort.by(Sort.Order.asc("year"), Sort.Order.asc("month"), Sort.Order.asc("day"));
+		Sort sort = Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"));
 		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
 	}
 }
