@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.dto.kis.RestKisToken;
 import com.my.stock.stockmanager.dto.kis.SocketKisToken;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 @Component
+@Slf4j
 public class KisTokenProvider {
 
 	private final String accessTokenGenerateUrl;
@@ -35,6 +37,8 @@ public class KisTokenProvider {
 
 		restKisToken = new ObjectMapper()
 				.readValue(ApiCaller.getInstance().post(accessTokenGenerateUrl, param), RestKisToken.class);
+		log.info("kis token type is  {}", restKisToken.getToken_type());
+		log.info("kis token is  {}", restKisToken.getAccess_token());
 	}
 
 	public RestKisToken getRestToken() throws Exception {

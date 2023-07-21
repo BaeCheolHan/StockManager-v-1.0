@@ -1,10 +1,7 @@
 package com.my.stock.stockmanager.rdb.repository.custom.impl;
 
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
-import com.my.stock.stockmanager.rdb.entity.QBankAccount;
-import com.my.stock.stockmanager.rdb.entity.QMember;
-import com.my.stock.stockmanager.rdb.entity.QStock;
-import com.my.stock.stockmanager.rdb.entity.QStocks;
+import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.custom.StockRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -12,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -25,6 +23,8 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 		QStock stock = QStock.stock;
 		QStocks stocks = QStocks.stocks;
 		QBankAccount bankAccount = QBankAccount.bankAccount;
+		QDividendSubSelect dividendSubSelect = QDividendSubSelect.dividendSubSelect;
+
 		BooleanBuilder builder = new BooleanBuilder();
 		if(memberId != null) {
 			builder.and(bankAccount.member.id.eq(memberId));
@@ -41,10 +41,12 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 						stocks.national,
 						stocks.name,
 						stock.price.multiply(stock.quantity).sum().divide(stock.quantity.sum()).as("avgPrice"),
-						stock.quantity.sum().as("quantity")
-						))
+						stock.quantity.sum().as("quantity"),
+						dividendSubSelect.totalDividend.coalesce(BigDecimal.ZERO).as("totalDividend")
+				))
 				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
 				.innerJoin(bankAccount).on(stock.bankAccount.id.eq(bankAccount.id))
+				.leftJoin(dividendSubSelect).on(stock.symbol.eq(dividendSubSelect.symbol))
 				.where(builder)
 				.orderBy(stock.quantity.asc())
 				.groupBy(stock.symbol)

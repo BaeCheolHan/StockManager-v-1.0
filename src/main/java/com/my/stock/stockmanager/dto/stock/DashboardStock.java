@@ -16,9 +16,12 @@ public class DashboardStock {
 	private String name;
 	private BigDecimal avgPrice;
 	private BigDecimal quantity;
+	private BigDecimal totalDividend;
 	private BigDecimal priceImportance;
 	// 주식 현재가
 	private BigDecimal nowPrice;
 
 	private String rateOfReturnPer;
+
+
 }
