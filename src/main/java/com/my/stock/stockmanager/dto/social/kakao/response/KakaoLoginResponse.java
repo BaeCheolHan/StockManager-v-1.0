@@ -18,4 +18,5 @@ public class KakaoLoginResponse {
 	private Long memberId;
 	private List<BankAccountDto> bankAccounts;
 	private ExchangeRate exchangeRate;
+	private Long defaultBankAccountId;
 }

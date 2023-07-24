@@ -4,14 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.constants.SnsType;
 import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
-import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
+import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import com.my.stock.stockmanager.rdb.entity.Member;
+import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
+import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +39,8 @@ public class SnsLoginService {
 
 	private final ExchangeRateRepository exchangeRateRepository;
 
+	private final PersonalSettingRepository personalSettingRepository;
+
 	@Transactional
 	public KakaoLoginResponse kakaoLogin(String code) throws Exception {
 		HashMap<String, Object> param = new HashMap<>();
@@ -59,16 +63,22 @@ public class SnsLoginService {
 
 		List<BankAccount> bankAccounts = entity.getBankAccount();
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
+		PersonalSetting setting = entity.getPersonalSetting();
 		KakaoLoginResponse resp = KakaoLoginResponse.builder()
 				.memberId(entity.getId())
 				.email(entity.getEmail())
 				.profile(userInfo.getKakao_account().getProfile())
-				.exchangeRate(exchangeRateList.get(exchangeRateList.size() -1))
+				.exchangeRate(exchangeRateList.get(exchangeRateList.size() - 1))
 				.build();
 
 		if (bankAccounts != null) {
 			resp.setBankAccounts(bankAccounts.stream().map(BankAccountDto::new).collect(Collectors.toList()));
 		}
+
+		if (setting != null) {
+			resp.setDefaultBankAccountId(setting.getDefaultBankAccountId());
+		}
+		
 		return resp;
 	}
 

@@ -35,17 +35,18 @@ public class BankAccountController {
 		return new BankAccountResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), accounts);
 	}
 
-	@GetMapping("/bank")
-	public void find(Long id) throws StockManagerException {
-		bankAccountService.findById(id);
-	}
-
 	@GetMapping("/banks")
 	public List<BankEnumMapperValue> getBankList() {
 		return Arrays.stream(Bank.values())
 				.filter(item -> item.getType().equals(BankType.STOCK))
 				.map(BankEnumMapperValue::new)
 				.collect(Collectors.toList());
+	}
+
+	@PutMapping("/defaultBank/{memberId}/{id}")
+	public BaseResponse saveDefaultBank(@PathVariable Long memberId, @PathVariable Long id) throws StockManagerException {
+		bankAccountService.saveDefaultBank(memberId, id);
+		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
 
