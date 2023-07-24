@@ -1,14 +1,15 @@
 package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
-import com.my.stock.stockmanager.dto.bank.account.response.BankAccountResponse;
 import com.my.stock.stockmanager.constants.Bank;
 import com.my.stock.stockmanager.constants.BankType;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
 import com.my.stock.stockmanager.dto.bank.account.request.BankAccountSaveRequest;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
+import com.my.stock.stockmanager.dto.bank.account.response.BankAccountResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +44,17 @@ public class BankAccountController {
 				.collect(Collectors.toList());
 	}
 
-	@PutMapping("/defaultBank/{memberId}/{id}")
+	@PutMapping("/default-bank/{memberId}/{id}")
 	public BaseResponse saveDefaultBank(@PathVariable Long memberId, @PathVariable Long id) throws StockManagerException {
 		bankAccountService.saveDefaultBank(memberId, id);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
+
+	@DeleteMapping("/bank/{id}")
+	public BankAccountResponse deleteBank(@PathVariable Long id) throws StockManagerException {
+		return new BankAccountResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), bankAccountService.deleteBank(id));
+	}
+
 
 
 }

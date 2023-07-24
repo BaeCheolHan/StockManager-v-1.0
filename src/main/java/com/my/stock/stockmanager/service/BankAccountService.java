@@ -10,6 +10,7 @@ import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,8 @@ public class BankAccountService {
 	private final MemberRepository memberRepository;
 
 	private final PersonalSettingRepository personalSettingRepository;
+
+	private final EntityManager entityManager;
 
 	@Transactional
 	public void save(BankAccountSaveRequest request) throws StockManagerException {
@@ -67,5 +70,21 @@ public class BankAccountService {
 			setting.setDefaultBankAccountId(id);
 			personalSettingRepository.save(setting);
 		}
+	}
+
+	@Transactional
+	public List<BankAccountDto> deleteBank(Long id) throws StockManagerException {
+		BankAccount account = bankAccountRepository.findById(id).orElseThrow(() -> new StockManagerException("존재하지 않는 계좌 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+		personalSettingRepository.findByDefaultBankAccountId(id).ifPresent(setting -> {
+			setting.setDefaultBankAccountId(null);
+			personalSettingRepository.save(setting);
+		});
+		bankAccountRepository.deleteById(id);
+
+		entityManager.flush();
+
+		Member member = memberRepository.findById(account.getMember().getId()).orElseThrow(() -> new StockManagerException("존재하지 않는 사용자 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+		return member.getBankAccount().stream().map(BankAccountDto::new).collect(Collectors.toList());
+
 	}
 }

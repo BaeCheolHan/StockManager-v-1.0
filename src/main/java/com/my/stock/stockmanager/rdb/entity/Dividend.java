@@ -1,13 +1,10 @@
 package com.my.stock.stockmanager.rdb.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
-import com.my.stock.stockmanager.constants.SnsType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = false)
@@ -32,8 +29,8 @@ public class Dividend extends BaseTimeEntity {
     private int day;
 
     private String symbol;
+
     @Column(nullable = false, precision = 24, scale = 6)
     private BigDecimal dividend;
-
 
 }
