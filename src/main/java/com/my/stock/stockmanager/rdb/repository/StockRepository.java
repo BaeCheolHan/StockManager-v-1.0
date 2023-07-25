@@ -12,4 +12,6 @@ public interface StockRepository extends JpaRepository<Stock, Long>, StockReposi
 	int countBySymbol(String symbol);
 
 	Optional<Stock> findFirstBySymbol(String symbol);
+
+	void deleteAllByBankAccountId(Long id);
 }

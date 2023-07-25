@@ -7,15 +7,18 @@ import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
+import com.my.stock.stockmanager.rdb.entity.Stock;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
+import com.my.stock.stockmanager.rdb.repository.StockRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +28,8 @@ public class BankAccountService {
 	private final MemberRepository memberRepository;
 
 	private final PersonalSettingRepository personalSettingRepository;
+
+	private final StockRepository stockRepository;
 
 	private final EntityManager entityManager;
 
@@ -79,6 +84,10 @@ public class BankAccountService {
 			setting.setDefaultBankAccountId(null);
 			personalSettingRepository.save(setting);
 		});
+
+
+		stockRepository.deleteAllByBankAccountId(id);
+
 		bankAccountRepository.deleteById(id);
 
 		entityManager.flush();

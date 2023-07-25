@@ -46,7 +46,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 				))
 				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
 				.innerJoin(bankAccount).on(stock.bankAccount.id.eq(bankAccount.id))
-				.leftJoin(dividendSubSelect).on(stock.symbol.eq(dividendSubSelect.symbol))
+				.leftJoin(dividendSubSelect).on(stock.symbol.eq(dividendSubSelect.symbol).and(bankAccount.member.id.eq(dividendSubSelect.memberId)))
 				.where(builder)
 				.orderBy(stock.quantity.asc())
 				.groupBy(stock.symbol)

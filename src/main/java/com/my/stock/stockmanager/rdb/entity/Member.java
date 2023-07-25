@@ -32,11 +32,11 @@ public class Member extends BaseTimeEntity {
     private String password;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BankAccount> bankAccount;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonalSetting personalSetting;
 
 }
