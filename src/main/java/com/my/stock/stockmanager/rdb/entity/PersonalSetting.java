@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Builder
 @Entity
 @Table
@@ -21,10 +19,6 @@ public class PersonalSetting {
 	@JsonBackReference
 	@OneToOne
 	private Member member;
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "personalSetting")
-	private List<PersonalDetailSetting> personalDetailSetting;
 
 	private Long defaultBankAccountId;
 
