@@ -1,27 +1,38 @@
 package com.my.stock.stockmanager.service;
 
-import com.my.stock.stockmanager.dto.personal.setting.request.DefaultBankAccountSettingSaveRequest;
-import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
-import com.my.stock.stockmanager.rdb.repository.MemberRepository;
-import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
-import com.my.stock.stockmanager.rdb.repository.StockRepository;
-import jakarta.persistence.EntityManager;
+import com.my.stock.stockmanager.dto.personal.setting.PersonalBankAccountSettingDto;
+import com.my.stock.stockmanager.rdb.entity.PersonalBankAccountSetting;
+import com.my.stock.stockmanager.rdb.repository.PersonalBankAccountSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PersonalSettingService {
-	private final BankAccountRepository bankAccountRepository;
-	private final MemberRepository memberRepository;
 
-	private final PersonalSettingRepository personalSettingRepository;
+	private final PersonalBankAccountSettingRepository personalBankAccountSettingRepository;
 
-	private final StockRepository stockRepository;
+	public PersonalBankAccountSetting findByBankAccountId(Long bankAccountId) {
+		return personalBankAccountSettingRepository.findByBankAccountId(bankAccountId).orElse(null);
+	}
 
-	private final EntityManager entityManager;
+	public void savePersonalBankAccountSetting(Long bankAccountId, PersonalBankAccountSettingDto personalBankAccountSettingSaveRequest) {
+		Optional<PersonalBankAccountSetting> opt = personalBankAccountSettingRepository.findByBankAccountId(bankAccountId);
 
+		opt.ifPresentOrElse(entity -> {
+					entity.setDefaultNational(personalBankAccountSettingSaveRequest.getDefaultNational());
+					entity.setDefaultCode(personalBankAccountSettingSaveRequest.getDefaultCode());
+					personalBankAccountSettingRepository.save(entity);
+				},
+				() -> {
+					PersonalBankAccountSetting entity = new PersonalBankAccountSetting();
+					entity.setBankAccountId(bankAccountId);
+					entity.setDefaultNational(personalBankAccountSettingSaveRequest.getDefaultNational());
+					entity.setDefaultCode(personalBankAccountSettingSaveRequest.getDefaultCode());
+					personalBankAccountSettingRepository.save(entity);
+				});
 
-	public void saveDefaultBankAccountSetting(Long memberId, DefaultBankAccountSettingSaveRequest defaultBankAccountSettingSaveRequest) {
 	}
 }
