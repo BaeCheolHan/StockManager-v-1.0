@@ -14,6 +14,7 @@ public class DetailStockInfo {
 	private BigDecimal highPrice;
 	private BigDecimal lowPrice;
 	private BigDecimal nowPrice;
+	private BigDecimal totalDividend;
 	private BigDecimal compareToYesterday;
 	private String compareToYesterdaySign;
 	private BigDecimal per;

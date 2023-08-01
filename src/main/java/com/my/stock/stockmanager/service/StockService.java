@@ -12,6 +12,7 @@ import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
+import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import com.my.stock.stockmanager.rdb.repository.StockRepository;
@@ -39,11 +40,14 @@ public class StockService {
 	private final KrNowStockPriceRepository krNowStockPriceRepository;
 	private final OverSeaNowStockPriceRepository overSeaNowStockPriceRepository;
 	private final MemberRepository memberRepository;
+	private final DividendRepository dividendRepository;
 
 	private final KisApiUtils kisApiUtils;
 
 	private final BankAccountDataService bankAccountDataService;
 	private final StocksDataService stocksDataService;
+
+
 
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
@@ -161,6 +165,8 @@ public class StockService {
 		member.getBankAccount()
 				.forEach(bank -> stocks.addAll(bank.getStocks().stream().filter(stock -> stock.getSymbol().equals(symbol)).toList()));
 
+		BigDecimal totalDividend = dividendRepository.findDividendSumByMemberIdAndSymbol(memberId, symbol);
+
 		if (national.equals("KR")) {
 			KrNowStockPrice entity = krNowStockPriceRepository.findById(symbol)
 					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
@@ -177,6 +183,7 @@ public class StockService {
 			return DetailStockInfo.builder()
 					.compareToYesterday(entity.getPrdy_vrss())
 					.compareToYesterdaySign(sign)
+					.totalDividend(totalDividend)
 					.startPrice(entity.getStck_oprc())
 					.nowPrice(entity.getStck_prpr())
 					.highPrice(entity.getStck_hgpr())
@@ -207,6 +214,7 @@ public class StockService {
 			return DetailStockInfo.builder()
 					.compareToYesterday(compareToYesterday)
 					.compareToYesterdaySign(sign)
+					.totalDividend(totalDividend)
 					.startPrice(entity.getOpen())
 					.nowPrice(entity.getLast())
 					.highPrice(entity.getHigh())
