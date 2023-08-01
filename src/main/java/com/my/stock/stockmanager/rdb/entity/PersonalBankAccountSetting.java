@@ -16,7 +16,8 @@ public class PersonalBankAccountSetting extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long bankAccountId;
+	@OneToOne
+	private BankAccount bankAccount;
 	private String defaultNational;
 	private String defaultCode;
 }

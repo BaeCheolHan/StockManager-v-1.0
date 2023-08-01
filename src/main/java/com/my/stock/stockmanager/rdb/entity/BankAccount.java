@@ -41,4 +41,7 @@ public class BankAccount extends BaseTimeEntity {
 	@JsonManagedReference
 	@OneToMany(mappedBy = "bankAccount", fetch=FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DepositWithdrawalHistory> depositWithdrawalHistories;
+
+	@OneToOne(mappedBy = "bankAccount", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private PersonalBankAccountSetting personalBankAccountSetting;
 }

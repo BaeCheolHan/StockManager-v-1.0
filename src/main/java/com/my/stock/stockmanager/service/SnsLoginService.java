@@ -7,12 +7,10 @@ import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
 import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
-import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
-import com.my.stock.stockmanager.rdb.entity.Member;
-import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
+import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
+import com.my.stock.stockmanager.rdb.repository.PersonalBankAccountSettingRepository;
 import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +37,8 @@ public class SnsLoginService {
 
 	private final ExchangeRateRepository exchangeRateRepository;
 
-	private final PersonalSettingRepository personalSettingRepository;
+	private final PersonalBankAccountSettingRepository personalBankAccountSettingRepository;
+
 
 	@Transactional
 	public KakaoLoginResponse kakaoLogin(String code) throws Exception {
@@ -77,8 +76,15 @@ public class SnsLoginService {
 
 		if (setting != null) {
 			resp.setDefaultBankAccountId(setting.getDefaultBankAccountId());
+			personalBankAccountSettingRepository.findByBankAccountId(setting.getDefaultBankAccountId()).ifPresent(
+					personalBankAccountSetting -> {
+						resp.setDefaultNational(personalBankAccountSetting.getDefaultNational());
+						resp.setDefaultCode(personalBankAccountSetting.getDefaultCode());
+					}
+			);
 		}
-		
+
+
 		return resp;
 	}
 

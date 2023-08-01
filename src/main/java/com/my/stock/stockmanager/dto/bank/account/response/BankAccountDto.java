@@ -2,6 +2,7 @@ package com.my.stock.stockmanager.dto.bank.account.response;
 
 import com.my.stock.stockmanager.constants.Bank;
 import com.my.stock.stockmanager.dto.bank.account.BankEnumMapperValue;
+import com.my.stock.stockmanager.dto.personal.setting.PersonalBankAccountSettingDto;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class BankAccountDto {
 
 	private BankEnumMapperValue bankInfo;
 
+	private PersonalBankAccountSettingDto personalBankAccountSetting;
+
 	public BankAccountDto(BankAccount bankAccount) {
 		this.id = bankAccount.getId();
 		this.alias = bankAccount.getAlias();
@@ -30,6 +33,8 @@ public class BankAccountDto {
 		if (this.bank != null) {
 			this.bankInfo = new BankEnumMapperValue(this.bank);
 		}
+
+		this.personalBankAccountSetting = new PersonalBankAccountSettingDto(bankAccount.getPersonalBankAccountSetting());
 
 	}
 }
