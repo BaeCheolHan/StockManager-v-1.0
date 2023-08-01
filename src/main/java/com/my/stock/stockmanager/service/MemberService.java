@@ -1,6 +1,5 @@
 package com.my.stock.stockmanager.service;
 
-import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.data.service.MemberDataService;
 import com.my.stock.stockmanager.rdb.entity.Member;

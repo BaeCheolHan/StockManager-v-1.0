@@ -2,7 +2,6 @@ package com.my.stock.stockmanager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.kis.RestKisToken;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
@@ -13,14 +12,15 @@ import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
-import com.my.stock.stockmanager.rdb.repository.*;
+import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
+import com.my.stock.stockmanager.rdb.repository.MemberRepository;
+import com.my.stock.stockmanager.rdb.repository.StockRepository;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
-import com.my.stock.stockmanager.utils.KisTokenProvider;
+import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,29 +33,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StockService {
-	@Value("${api.kis.appKey}")
-	private String appKey;
-	@Value("${api.kis.app-secret}")
-	private String appSecret;
 
 	private final StockRepository stockRepository;
-
 	private final ExchangeRateRepository exchangeRateRepository;
-
-	private final BankAccountRepository bankAccountRepository;
-
 	private final KrNowStockPriceRepository krNowStockPriceRepository;
-
 	private final OverSeaNowStockPriceRepository overSeaNowStockPriceRepository;
-
 	private final MemberRepository memberRepository;
 
-	private final StocksRepository stocksRepository;
-
-	private final KisTokenProvider kisTokenProvider;
+	private final KisApiUtils kisApiUtils;
 
 	private final BankAccountDataService bankAccountDataService;
-
 	private final StocksDataService stocksDataService;
 
 
@@ -85,7 +72,6 @@ public class StockService {
 
 			}
 		});
-
 
 		final BigDecimal totalInvestmentAmount = stocks.stream()
 				.map(it -> {
@@ -134,13 +120,8 @@ public class StockService {
 	private void setNowPrice(StockSaveRequest request) throws Exception {
 		Stocks stocks = stocksDataService.findBySymbol(request.getSymbol());
 
+		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
 		if (!stocks.getNational().equals("KR")) {
-			RestKisToken kisToken = kisTokenProvider.getRestToken();
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("authorization", kisToken.getToken_type() + " " + kisToken.getAccess_token());
-			headers.add("content-type", "application/json; charset=utf-8");
-			headers.add("appkey", appKey);
-			headers.add("appsecret", appSecret);
 			headers.add("tr_id", "HHDFS76200200");
 			headers.add("custtype", "P");
 
@@ -156,12 +137,6 @@ public class StockService {
 			entity.ifPresent(overSeaNowStockPriceRepository::delete);
 			overSeaNowStockPriceRepository.save(response.getOutput());
 		} else {
-			RestKisToken kisToken = kisTokenProvider.getRestToken();
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("authorization", kisToken.getToken_type() + " " + kisToken.getAccess_token());
-			headers.add("content-type", "application/json; charset=utf-8");
-			headers.add("appkey", appKey);
-			headers.add("appsecret", appSecret);
 			headers.add("tr_id", "FHKST01010100");
 
 			HashMap<String, Object> param = new HashMap<>();
@@ -190,7 +165,7 @@ public class StockService {
 			KrNowStockPrice entity = krNowStockPriceRepository.findById(symbol)
 					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 
-			String sign = "";
+			String sign;
 			if (Integer.parseInt(entity.getPrdy_vrss_sign()) < 3) {
 				sign = "plus";
 			} else if (Integer.parseInt(entity.getPrdy_vrss_sign()) == 3) {
@@ -220,7 +195,7 @@ public class StockService {
 			BigDecimal last = entity.getLast();
 			BigDecimal compareToYesterday = base.subtract(last);
 
-			String sign = "";
+			String sign;
 			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
 				sign = "plus";
 			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {

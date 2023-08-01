@@ -1,19 +1,15 @@
 package com.my.stock.stockmanager.service;
 
-import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.personal.setting.PersonalBankAccountSettingDto;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.PersonalBankAccountSetting;
-import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
 import com.my.stock.stockmanager.rdb.repository.PersonalBankAccountSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

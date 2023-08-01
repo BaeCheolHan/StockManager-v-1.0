@@ -9,7 +9,6 @@ import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
 import com.my.stock.stockmanager.rdb.repository.BankAccountRepository;
-import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import com.my.stock.stockmanager.rdb.repository.PersonalSettingRepository;
 import com.my.stock.stockmanager.rdb.repository.StockRepository;
 import jakarta.persistence.EntityManager;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BankAccountService {
 	private final BankAccountRepository bankAccountRepository;
-	private final MemberRepository memberRepository;
 
 	private final PersonalSettingRepository personalSettingRepository;
 
@@ -85,15 +83,11 @@ public class BankAccountService {
 			personalSettingRepository.save(setting);
 		});
 
-
 		stockRepository.deleteAllByBankAccountId(id);
-
 		bankAccountRepository.deleteById(id);
-
 		entityManager.flush();
 
 		Member member = memberDataService.findById(account.getMember().getId());
-
 		return member.getBankAccount().stream().map(BankAccountDto::new).collect(Collectors.toList());
 
 	}
