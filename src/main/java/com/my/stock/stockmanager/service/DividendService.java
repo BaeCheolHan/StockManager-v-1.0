@@ -6,6 +6,7 @@ import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
 import com.my.stock.stockmanager.dto.dividend.DividendChart;
 import com.my.stock.stockmanager.dto.dividend.DividendInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.Dividend;
 import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;

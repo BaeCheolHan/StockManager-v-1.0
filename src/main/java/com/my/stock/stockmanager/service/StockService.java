@@ -10,6 +10,8 @@ import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
+import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
+import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.*;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
@@ -51,6 +53,10 @@ public class StockService {
 	private final StocksRepository stocksRepository;
 
 	private final KisTokenProvider kisTokenProvider;
+
+	private final BankAccountDataService bankAccountDataService;
+
+	private final StocksDataService stocksDataService;
 
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
@@ -108,8 +114,7 @@ public class StockService {
 
 	@Transactional
 	public void saveStock(StockSaveRequest request) throws Exception {
-		BankAccount account = bankAccountRepository.findById(request.getBankId())
-				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+		BankAccount account = bankAccountDataService.findById(request.getBankId());
 
 		Optional<Stock> existedStock = stockRepository.findFirstBySymbol(request.getSymbol());
 
@@ -127,8 +132,7 @@ public class StockService {
 	}
 
 	private void setNowPrice(StockSaveRequest request) throws Exception {
-		Stocks stocks = stocksRepository.findBySymbol(request.getSymbol())
-				.orElseThrow(() -> new StockManagerException("존재하지 않는 은행 식별키입니다.", ResponseCode.NOT_FOUND_ID));
+		Stocks stocks = stocksDataService.findBySymbol(request.getSymbol());
 
 		if (!stocks.getNational().equals("KR")) {
 			RestKisToken kisToken = kisTokenProvider.getRestToken();

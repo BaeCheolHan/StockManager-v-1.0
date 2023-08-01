@@ -2,6 +2,7 @@ package com.my.stock.stockmanager.service;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.rdb.data.service.MemberDataService;
 import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
+
+	private final MemberDataService memberDataService;
 	public void save(Member member) {
 		memberRepository.save(member);
 	}
 
 	@Transactional
 	public Member findById(Long id) throws StockManagerException {
-		return memberRepository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+		return memberDataService.findById(id);
 	}
 }
