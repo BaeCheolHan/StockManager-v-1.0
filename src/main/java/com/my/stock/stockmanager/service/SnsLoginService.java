@@ -78,14 +78,7 @@ public class SnsLoginService {
 
 		if (setting != null) {
 			resp.setDefaultBankAccountId(setting.getDefaultBankAccountId());
-			personalBankAccountSettingRepository.findByBankAccountId(setting.getDefaultBankAccountId()).ifPresent(
-					personalBankAccountSetting -> {
-						resp.setDefaultNational(personalBankAccountSetting.getDefaultNational());
-						resp.setDefaultCode(personalBankAccountSetting.getDefaultCode());
-					}
-			);
 		}
-
 
 		return resp;
 	}
