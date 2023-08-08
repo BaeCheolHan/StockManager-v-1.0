@@ -55,7 +55,7 @@ public class StockService {
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
-				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
+				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(stock.getSymbol());
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getLast());
 					BigDecimal nowPrice = it.getLast();
@@ -146,7 +146,8 @@ public class StockService {
 							.get("https://openapi.koreainvestment.com:9443/uapi/overseas-price/v1/quotations/price-detail", headers, param)
 					, OverSeaNowStockPriceWrapper.class);
 
-			Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(response.getOutput().getRsym());
+			response.getOutput().setSymbol(symbol);
+			Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(symbol);
 			entity.ifPresent(overSeaNowStockPriceRepository::delete);
 			overSeaNowStockPriceRepository.save(response.getOutput());
 			return response.getOutput().getLast();
@@ -159,7 +160,9 @@ public class StockService {
 			KrNowStockPriceWrapper response = new ObjectMapper().readValue(ApiCaller.getInstance()
 							.get("https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price", headers, param)
 					, KrNowStockPriceWrapper.class);
-			Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(response.getOutput().getStck_shrn_iscd());
+			response.getOutput().setSymbol(symbol);
+
+			Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(response.getOutput().getSymbol());
 			entity.ifPresent(krNowStockPriceRepository::delete);
 			krNowStockPriceRepository.save(response.getOutput());
 			return response.getOutput().getStck_prpr();
@@ -206,7 +209,7 @@ public class StockService {
 					.stocks(stocks)
 					.build();
 		} else {
-			OverSeaNowStockPrice entity = overSeaNowStockPriceRepository.findById("D".concat(code).concat(symbol))
+			OverSeaNowStockPrice entity = overSeaNowStockPriceRepository.findById(symbol)
 					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 
 			BigDecimal base = entity.getBase();

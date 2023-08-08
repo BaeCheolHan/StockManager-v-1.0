@@ -20,6 +20,8 @@ public class OverSeaNowStockPrice {
 //	SHS : 상해, SZS : 심천
 //	HSX : 호치민, HNX : 하노이
 	@Id
+	private String symbol;
+
 	private String rsym;
 	// 소수점자리수
 	private Integer zdiv;
