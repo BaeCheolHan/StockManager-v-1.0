@@ -22,6 +22,7 @@ import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StockService {
 
@@ -48,8 +50,6 @@ public class StockService {
 	private final StocksDataService stocksDataService;
 
 
-
-
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
 		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
@@ -58,19 +58,19 @@ public class StockService {
 				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById("D".concat(stock.getCode()).concat(stock.getSymbol()));
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getLast());
-					BigDecimal nowPrice1 = it.getLast();
+					BigDecimal nowPrice = it.getLast();
 					BigDecimal avgPrice = stock.getAvgPrice();
 
-					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
 			} else {
 				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
 				entity.ifPresent(it -> {
 					stock.setNowPrice(it.getStck_prpr());
-					BigDecimal nowPrice1 = it.getStck_prpr();
+					BigDecimal nowPrice = it.getStck_prpr();
 					BigDecimal avgPrice = stock.getAvgPrice();
-					stock.setRateOfReturnPer(nowPrice1.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 				});
 
@@ -79,7 +79,16 @@ public class StockService {
 
 		final BigDecimal totalInvestmentAmount = stocks.stream()
 				.map(it -> {
+					if (it.getNowPrice() == null) {
+						try {
+							BigDecimal nowPrice = this.setNowPriceAndGetNowPrice(it.getSymbol());
+							it.setNowPrice(nowPrice);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					}
 					if (!it.getNational().equals("KR")) {
+						log.info("{}", it.getName());
 						return it.getNowPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
 					} else {
 						return it.getNowPrice().multiply(it.getQuantity());
@@ -116,13 +125,13 @@ public class StockService {
 		stockRepository.save(stock);
 
 		if (existedStock.isEmpty()) {
-			setNowPrice(request);
+			setNowPriceAndGetNowPrice(request.getSymbol());
 		}
 
 	}
 
-	private void setNowPrice(StockSaveRequest request) throws Exception {
-		Stocks stocks = stocksDataService.findBySymbol(request.getSymbol());
+	private BigDecimal setNowPriceAndGetNowPrice(String symbol) throws Exception {
+		Stocks stocks = stocksDataService.findBySymbol(symbol);
 
 		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
 		if (!stocks.getNational().equals("KR")) {
@@ -140,6 +149,7 @@ public class StockService {
 			Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(response.getOutput().getRsym());
 			entity.ifPresent(overSeaNowStockPriceRepository::delete);
 			overSeaNowStockPriceRepository.save(response.getOutput());
+			return response.getOutput().getLast();
 		} else {
 			headers.add("tr_id", "FHKST01010100");
 
@@ -152,6 +162,7 @@ public class StockService {
 			Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(response.getOutput().getStck_shrn_iscd());
 			entity.ifPresent(krNowStockPriceRepository::delete);
 			krNowStockPriceRepository.save(response.getOutput());
+			return response.getOutput().getStck_prpr();
 		}
 	}
 
