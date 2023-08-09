@@ -88,7 +88,6 @@ public class StockService {
 						}
 					}
 					if (!it.getNational().equals("KR")) {
-						log.info("{}", it.getName());
 						return it.getNowPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
 					} else {
 						return it.getNowPrice().multiply(it.getQuantity());

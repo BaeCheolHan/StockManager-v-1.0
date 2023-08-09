@@ -1,0 +1,29 @@
+package com.my.stock.stockmanager.rdb.entity;
+
+import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@EqualsAndHashCode
+@Builder
+@Entity
+@Table
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class DailyTotalInvestmentAmount extends BaseTimeEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne
+	private Member member;
+
+	private LocalDate date;
+	private BigDecimal totalInvestmentAmount;
+	private BigDecimal evaluationAmount;
+}

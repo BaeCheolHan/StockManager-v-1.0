@@ -37,8 +37,6 @@ public class KisTokenProvider {
 
 		restKisToken = new ObjectMapper()
 				.readValue(ApiCaller.getInstance().post(accessTokenGenerateUrl, param), RestKisToken.class);
-		log.info("kis token type is  {}", restKisToken.getToken_type());
-		log.info("kis token is  {}", restKisToken.getAccess_token());
 	}
 
 	public RestKisToken getRestToken() throws Exception {
