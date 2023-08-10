@@ -1,15 +1,16 @@
 package com.my.stock.stockmanager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
-import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
+import com.my.stock.stockmanager.rdb.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.DividendRepository;
@@ -48,6 +49,9 @@ public class StockService {
 
 	private final BankAccountDataService bankAccountDataService;
 	private final StocksDataService stocksDataService;
+	private final OverSeaNowStockPriceDataService overSeaNowStockPriceDataService;
+
+	private final KisApi kisApi;
 
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
@@ -134,22 +138,7 @@ public class StockService {
 
 		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
 		if (!stocks.getNational().equals("KR")) {
-			headers.add("tr_id", "HHDFS76200200");
-			headers.add("custtype", "P");
-
-			HashMap<String, Object> param = new HashMap<>();
-			param.put("AUTH", "");
-			param.put("EXCD", stocks.getCode());
-			param.put("SYMB", stocks.getSymbol());
-			OverSeaNowStockPriceWrapper response = new ObjectMapper().readValue(ApiCaller.getInstance()
-							.get("https://openapi.koreainvestment.com:9443/uapi/overseas-price/v1/quotations/price-detail", headers, param)
-					, OverSeaNowStockPriceWrapper.class);
-
-			response.getOutput().setSymbol(symbol);
-			Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(symbol);
-			entity.ifPresent(overSeaNowStockPriceRepository::delete);
-			overSeaNowStockPriceRepository.save(response.getOutput());
-			return response.getOutput().getLast();
+			return overSeaNowStockPriceDataService.findById(symbol).getLast();
 		} else {
 			headers.add("tr_id", "FHKST01010100");
 
@@ -208,8 +197,7 @@ public class StockService {
 					.stocks(stocks)
 					.build();
 		} else {
-			OverSeaNowStockPrice entity = overSeaNowStockPriceRepository.findById(symbol)
-					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+			OverSeaNowStockPrice entity = overSeaNowStockPriceDataService.findById(symbol);
 
 			BigDecimal base = entity.getBase();
 			BigDecimal last = entity.getLast();

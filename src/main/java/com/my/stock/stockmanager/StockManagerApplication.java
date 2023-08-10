@@ -7,9 +7,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-@SpringBootApplication
 @EnableJpaAuditing
 @EnableAsync
+@SpringBootApplication
 public class StockManagerApplication {
 
 	public static void main(String[] args) {
