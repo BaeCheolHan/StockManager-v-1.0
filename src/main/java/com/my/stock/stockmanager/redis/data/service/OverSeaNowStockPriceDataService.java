@@ -1,8 +1,9 @@
-package com.my.stock.stockmanager.rdb.data.service;
+package com.my.stock.stockmanager.redis.data.service;
 
 import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.dto.kis.request.OverSeaStockPriceRequest;
 import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
+import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.Stocks;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
@@ -10,8 +11,6 @@ import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,8 @@ public class OverSeaNowStockPriceDataService {
 			try {
 				Stocks stocks = stocksDataService.findBySymbol(symbol);
 				HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-				headers.add("tr_id", "FHKST01010100");
+				headers.add("tr_id", "HHDFS76200200");
+				headers.add("custtype", "P");
 
 				OverSeaNowStockPriceWrapper response = kisApi.getOverSeaStockPrice(headers, OverSeaStockPriceRequest.builder()
 						.AUTH("")

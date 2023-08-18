@@ -2,9 +2,7 @@ package com.my.stock.stockmanager.rdb.data.service;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.exception.StockManagerException;
-import com.my.stock.stockmanager.rdb.entity.Stock;
 import com.my.stock.stockmanager.rdb.entity.Stocks;
-import com.my.stock.stockmanager.rdb.repository.StockRepository;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

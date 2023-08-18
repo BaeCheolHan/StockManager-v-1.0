@@ -20,7 +20,7 @@ public class KisApiUtils {
 	public HttpHeaders getDefaultApiHeader() throws Exception {
 		RestKisToken kisToken = kisTokenProvider.getRestToken();
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("authorization", kisToken.getToken_type() + " " + kisToken.getAccess_token());
+		headers.add("authorization", String.format("%s %s", kisToken.getToken_type(), kisToken.getAccess_token()));
 		headers.add("content-type", "application/json; charset=utf-8");
 		headers.add("appkey", appKey);
 		headers.add("appsecret", appSecret);

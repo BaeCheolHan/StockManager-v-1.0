@@ -1,22 +1,19 @@
 package com.my.stock.stockmanager.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
-import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
-import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
-import com.my.stock.stockmanager.rdb.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import com.my.stock.stockmanager.rdb.repository.StockRepository;
+import com.my.stock.stockmanager.redis.data.service.KrNowStockPriceDataService;
+import com.my.stock.stockmanager.redis.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
@@ -24,13 +21,15 @@ import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository
 import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,8 +49,7 @@ public class StockService {
 	private final BankAccountDataService bankAccountDataService;
 	private final StocksDataService stocksDataService;
 	private final OverSeaNowStockPriceDataService overSeaNowStockPriceDataService;
-
-	private final KisApi kisApi;
+	private final KrNowStockPriceDataService krNowStockPriceDataService;
 
 
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
@@ -135,25 +133,10 @@ public class StockService {
 
 	private BigDecimal setNowPriceAndGetNowPrice(String symbol) throws Exception {
 		Stocks stocks = stocksDataService.findBySymbol(symbol);
-
-		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
 		if (!stocks.getNational().equals("KR")) {
 			return overSeaNowStockPriceDataService.findById(symbol).getLast();
 		} else {
-			headers.add("tr_id", "FHKST01010100");
-
-			HashMap<String, Object> param = new HashMap<>();
-			param.put("FID_COND_MRKT_DIV_CODE", "J");
-			param.put("FID_INPUT_ISCD", stocks.getSymbol());
-			KrNowStockPriceWrapper response = new ObjectMapper().readValue(ApiCaller.getInstance()
-							.get("https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price", headers, param)
-					, KrNowStockPriceWrapper.class);
-			response.getOutput().setSymbol(symbol);
-
-			Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(response.getOutput().getSymbol());
-			entity.ifPresent(krNowStockPriceRepository::delete);
-			krNowStockPriceRepository.save(response.getOutput());
-			return response.getOutput().getStck_prpr();
+			return krNowStockPriceDataService.findById(symbol).getStck_prpr();
 		}
 	}
 
