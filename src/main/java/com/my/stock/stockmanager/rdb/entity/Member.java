@@ -42,4 +42,7 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<DailyTotalInvestmentAmount> dailyTotalInvestmentAmounts;
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LoginHistory> loginHistories;
+
 }

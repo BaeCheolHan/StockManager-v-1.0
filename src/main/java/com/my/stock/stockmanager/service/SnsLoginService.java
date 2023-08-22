@@ -7,11 +7,9 @@ import com.my.stock.stockmanager.dto.social.kakao.KaKaoUserData;
 import com.my.stock.stockmanager.dto.social.kakao.KakaoToken;
 import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
-import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
-import com.my.stock.stockmanager.rdb.entity.Member;
-import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
+import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
+import com.my.stock.stockmanager.rdb.repository.LoginHistoryRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +34,7 @@ public class SnsLoginService {
 
 	private final MemberRepository memberRepository;
 	private final ExchangeRateRepository exchangeRateRepository;
+	private final LoginHistoryRepository loginHistoryRepository;
 
 
 	@Transactional
@@ -76,6 +75,9 @@ public class SnsLoginService {
 			resp.setDefaultBankAccountId(setting.getDefaultBankAccountId());
 		}
 
+		LoginHistory history = new LoginHistory();
+		history.setMember(entity);
+		loginHistoryRepository.save(history);
 		return resp;
 	}
 
