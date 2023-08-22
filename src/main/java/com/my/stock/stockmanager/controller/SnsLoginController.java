@@ -19,5 +19,4 @@ public class SnsLoginController {
 		return snsLoginService.kakaoLogin(code);
 	}
 
-
 }

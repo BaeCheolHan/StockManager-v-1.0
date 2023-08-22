@@ -13,7 +13,6 @@ import com.my.stock.stockmanager.rdb.entity.Member;
 import com.my.stock.stockmanager.rdb.entity.PersonalSetting;
 import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
 import com.my.stock.stockmanager.rdb.repository.MemberRepository;
-import com.my.stock.stockmanager.rdb.repository.PersonalBankAccountSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -36,10 +35,7 @@ public class SnsLoginService {
 	private String kakaoCallbackUrl;
 
 	private final MemberRepository memberRepository;
-
 	private final ExchangeRateRepository exchangeRateRepository;
-
-	private final PersonalBankAccountSettingRepository personalBankAccountSettingRepository;
 
 
 	@Transactional
@@ -90,6 +86,5 @@ public class SnsLoginService {
 		headers.setContentType(MediaType.valueOf("application/x-www-form-urlencoded;charset=utf-8"));
 
 		return ApiCaller.getInstance().post("https://kapi.kakao.com/v2/user/me", null, headers, MediaType.APPLICATION_FORM_URLENCODED, KaKaoUserData.class);
-
 	}
 }

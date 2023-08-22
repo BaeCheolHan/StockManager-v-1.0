@@ -31,7 +31,7 @@ public class StocksController {
 	private final StocksService stocksService;
 
 	@GetMapping("/stocks/{code}")
-	public StocksListResponse getStocks( @PathVariable String code) {
+	public StocksListResponse getStocks(@PathVariable String code) {
 		List<Stocks> list = stocksService.getStocksListByCode(code);
 		return StocksListResponse.builder().stocksList(list).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
 	}

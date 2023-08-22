@@ -18,7 +18,6 @@ import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
-import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,6 @@ public class StockService {
 	private final MemberRepository memberRepository;
 	private final DividendRepository dividendRepository;
 
-	private final KisApiUtils kisApiUtils;
 
 	private final BankAccountDataService bankAccountDataService;
 	private final StocksDataService stocksDataService;

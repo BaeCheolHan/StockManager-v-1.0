@@ -21,7 +21,6 @@ public class PersonalSettingController {
 		return new PersonalBankAccountSettingResponse(personalSettingService.findByBankAccountId(bankAccountId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
-
 	@PutMapping("/{bankAccountId}")
 	public BaseResponse savePersonalSetting(@PathVariable Long bankAccountId, @RequestBody PersonalBankAccountSettingDto personalBankAccountSettingSaveRequest) throws StockManagerException {
 		personalSettingService.savePersonalBankAccountSetting(bankAccountId, personalBankAccountSettingSaveRequest);
