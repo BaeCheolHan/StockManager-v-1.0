@@ -15,6 +15,6 @@ public interface DividendRepository extends JpaRepository<Dividend, Long>, Divid
 	@Query(value = "SELECT year FROM dividend WHERE member_id = :memberId GROUP BY year ORDER BY year ASC", nativeQuery = true)
 	List<Integer> findYearByMemberIdGroupByYear(Long memberId);
 
-	@Query(value="SELECT sum(dividend) AS totalDividend FROM stock_manager.dividend WHERE member_id = :memberId AND symbol = :symbol", nativeQuery = true )
+	@Query(value="SELECT IF(sum(dividend), sum(dividend), 0) AS totalDividend FROM stock_manager.dividend WHERE member_id = :memberId AND symbol = :symbol", nativeQuery = true )
 	BigDecimal findDividendSumByMemberIdAndSymbol(Long memberId, String symbol);
 }
