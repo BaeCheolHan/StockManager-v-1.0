@@ -218,5 +218,5 @@ public class KrNowStockPrice {
 
 	@TimeToLive(unit = TimeUnit.MINUTES)
 	@Builder.Default
-	private Long ttl = 5L;
+	private Long expiration = 5L;
 }
