@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.redis.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -7,6 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Setter
@@ -213,4 +215,8 @@ public class KrNowStockPrice {
 	private String sltr_yn;
 	// 신 고가 저가 구분 코드	조회하는 종목이 신고/신저에 도달했을 경우에만 조회됨
 	private String new_hgpr_lwpr_cls_code;
+
+	@TimeToLive(unit = TimeUnit.MINUTES)
+	@Builder.Default
+	private Long ttl = 5L;
 }

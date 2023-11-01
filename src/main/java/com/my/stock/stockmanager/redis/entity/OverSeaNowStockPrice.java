@@ -1,11 +1,14 @@
 package com.my.stock.stockmanager.redis.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Setter
@@ -104,5 +107,9 @@ public class OverSeaNowStockPrice {
 	private BigDecimal tamt;
 	// ETP 분류명
 	private String etyp_nm;
+
+	@TimeToLive(unit = TimeUnit.MINUTES)
+	@Builder.Default
+	private Long ttl = 5L;
 
 }
