@@ -5,6 +5,7 @@ import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
+import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeriesResponse;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
@@ -23,8 +24,10 @@ public class StockController {
 
 	@GetMapping({"/{memberId}", "/{memberId}/{bankId}"})
 	public DashboardStockResponse getStocks(@PathVariable Long memberId, @PathVariable(required = false) Long bankId) {
-		List<DashboardStock> data = service.getStocks(memberId, bankId);
-		return DashboardStockResponse.builder().stocks(data).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+		return DashboardStockResponse.builder()
+				.stocks(service.getStocks(memberId, bankId))
+				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
+				.build();
 	}
 
 	@PostMapping
@@ -34,14 +37,23 @@ public class StockController {
 	}
 
 	@GetMapping("/{memberId}/{national}/{code}")
-	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws StockManagerException {
-		DetailStockInfo detail = service.getDetail(memberId, national, code, symbol);
-		return DetailStockInfoResponse.builder().detail(detail).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
+	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
+		return DetailStockInfoResponse.builder()
+				.detail(service.getDetail(memberId, national, code, symbol))
+				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
+				.build();
 	}
 
 	@DeleteMapping("/{id}")
 	public BaseResponse deleteStock(@PathVariable Long id) {
 		service.deleteById(id);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	}
+
+	@GetMapping("/chart/{chartType}/{national}/{symbol}")
+	public DetailStockChartSeriesResponse getDailyChartData(@PathVariable String chartType, @PathVariable String national, @PathVariable String symbol) throws Exception {
+		return DetailStockChartSeriesResponse.builder().chartData(service.getDailyChartData(chartType, national, symbol))
+				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
+				.build();
 	}
 }

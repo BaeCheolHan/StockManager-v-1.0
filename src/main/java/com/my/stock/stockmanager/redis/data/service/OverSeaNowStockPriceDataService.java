@@ -2,7 +2,7 @@ package com.my.stock.stockmanager.redis.data.service;
 
 import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.dto.kis.request.OverSeaStockPriceRequest;
-import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.OverSeaNowStockPriceWrapper;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.Stocks;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;

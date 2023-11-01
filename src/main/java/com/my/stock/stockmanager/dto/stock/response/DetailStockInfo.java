@@ -22,4 +22,5 @@ public class DetailStockInfo {
 	private BigDecimal eps;
 	private BigDecimal bps;
 	private List<Stock> stocks;
+	private List<DetailStockChartSeries> chartData;
 }

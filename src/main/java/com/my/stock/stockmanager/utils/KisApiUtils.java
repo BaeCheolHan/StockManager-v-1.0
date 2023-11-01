@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.utils;
 
-import com.my.stock.stockmanager.dto.kis.RestKisToken;
+import com.my.stock.stockmanager.redis.entity.RestKisToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;

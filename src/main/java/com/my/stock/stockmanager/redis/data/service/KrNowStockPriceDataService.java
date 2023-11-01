@@ -2,7 +2,7 @@ package com.my.stock.stockmanager.redis.data.service;
 
 import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.dto.kis.request.KrStockPriceRequest;
-import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.KrNowStockPriceWrapper;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
 import com.my.stock.stockmanager.utils.KisApiUtils;

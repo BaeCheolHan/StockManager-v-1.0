@@ -1,9 +1,13 @@
 package com.my.stock.stockmanager.api.kis;
 
+import com.my.stock.stockmanager.dto.kis.request.KrDailyStockChartPriceRequest;
 import com.my.stock.stockmanager.dto.kis.request.KrStockPriceRequest;
+import com.my.stock.stockmanager.dto.kis.request.OverSeaDailyStockChartPriceRequest;
 import com.my.stock.stockmanager.dto.kis.request.OverSeaStockPriceRequest;
-import com.my.stock.stockmanager.dto.stock.KrNowStockPriceWrapper;
-import com.my.stock.stockmanager.dto.stock.OverSeaNowStockPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.KrNowStockPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.OverSeaNowStockPriceWrapper;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.http.HttpHeaders;
@@ -18,4 +22,12 @@ public interface KisApi {
 
 	@GetMapping("uapi/domestic-stock/v1/quotations/inquire-price")
 	KrNowStockPriceWrapper getKorStockPrice(@RequestHeader HttpHeaders header, @SpringQueryMap KrStockPriceRequest param);
+
+	@GetMapping("uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice")
+	KrDailyStockChartPriceWrapper getKrDailyStockChartPrice(@RequestHeader HttpHeaders header, @SpringQueryMap KrDailyStockChartPriceRequest param);
+
+	@GetMapping("uapi/overseas-price/v1/quotations/dailyprice")
+	OverSeaDailyStockChartPriceWrapper getOverSeaDailyStockChartPrice(@RequestHeader HttpHeaders header, @SpringQueryMap OverSeaDailyStockChartPriceRequest param);
+
+
 }

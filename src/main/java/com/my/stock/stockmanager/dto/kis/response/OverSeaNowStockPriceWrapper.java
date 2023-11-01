@@ -1,4 +1,4 @@
-package com.my.stock.stockmanager.dto.stock;
+package com.my.stock.stockmanager.dto.kis.response;
 
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import lombok.Getter;
