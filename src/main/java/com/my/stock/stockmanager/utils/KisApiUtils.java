@@ -17,13 +17,17 @@ public class KisApiUtils {
 
 	private final KisTokenProvider kisTokenProvider;
 
-	public HttpHeaders getDefaultApiHeader() throws Exception {
+	public HttpHeaders getDefaultApiHeader(String transactionId) throws Exception {
 		RestKisToken kisToken = kisTokenProvider.getRestToken();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("authorization", String.format("%s %s", kisToken.getToken_type(), kisToken.getAccess_token()));
 		headers.add("content-type", "application/json; charset=utf-8");
 		headers.add("appkey", appKey);
 		headers.add("appsecret", appSecret);
+
+		if(transactionId != null) {
+			headers.add("tr_id", transactionId);
+		}
 
 		return headers;
 	}

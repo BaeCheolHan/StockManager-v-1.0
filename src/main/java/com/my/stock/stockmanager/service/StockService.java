@@ -173,8 +173,7 @@ public class StockService {
 				sign = "minus";
 			}
 
-			HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-			headers.add("tr_id", "FHKST03010100");
+			HttpHeaders headers = kisApiUtils.getDefaultApiHeader("FHKST03010100");
 			headers.add("custtype", "P");
 
 			KrDailyStockChartPriceRequest request = KrDailyStockChartPriceRequest.builder()
@@ -249,8 +248,7 @@ public class StockService {
 	}
 
 	public List<DetailStockChartSeries> getKrDailyChart(String chartType, String symbol) throws Exception {
-		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-		headers.add("tr_id", "FHKST03010100");
+		HttpHeaders headers = kisApiUtils.getDefaultApiHeader("FHKST03010100");
 		headers.add("custtype", "P");
 
 		KrDailyStockChartPriceRequest request = KrDailyStockChartPriceRequest.builder()
@@ -275,8 +273,7 @@ public class StockService {
 
 
 	public List<DetailStockChartSeries> getOverSeaDailyChart(String chartType, String symbol) throws Exception {
-		HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-		headers.add("tr_id", "HHDFS76240000");
+		HttpHeaders headers = kisApiUtils.getDefaultApiHeader("HHDFS76240000");
 		headers.add("custtype", "P");
 		Stocks stock = stocksDataService.findBySymbol(symbol);
 

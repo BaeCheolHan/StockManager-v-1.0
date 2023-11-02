@@ -27,8 +27,7 @@ public class OverSeaNowStockPriceDataService {
 		return overSeaNowStockPriceRepository.findById(symbol).orElseGet(() -> {
 			try {
 				Stocks stocks = stocksDataService.findBySymbol(symbol);
-				HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-				headers.add("tr_id", "HHDFS76200200");
+				HttpHeaders headers = kisApiUtils.getDefaultApiHeader("HHDFS76200200");
 				headers.add("custtype", "P");
 
 				OverSeaNowStockPriceWrapper response = kisApi.getOverSeaStockPrice(headers, OverSeaStockPriceRequest.builder()

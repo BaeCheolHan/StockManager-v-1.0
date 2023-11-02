@@ -41,6 +41,7 @@ public class KisTokenProvider {
 
 			RestKisToken restKisToken = new ObjectMapper()
 					.readValue(ApiCaller.getInstance().post(accessTokenGenerateUrl, param), RestKisToken.class);
+			restKisToken.setExpires_in(restKisToken.getExpires_in() - 10000);
 			restKisTokenRepository.save(restKisToken);
 			return restKisToken;
 		}

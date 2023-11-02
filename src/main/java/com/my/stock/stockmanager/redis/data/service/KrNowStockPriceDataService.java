@@ -23,8 +23,7 @@ public class KrNowStockPriceDataService {
 
 		return krNowStockPriceRepository.findById(symbol).orElseGet(() -> {
 			try {
-				HttpHeaders headers = kisApiUtils.getDefaultApiHeader();
-				headers.add("tr_id", "FHKST01010100");
+				HttpHeaders headers = kisApiUtils.getDefaultApiHeader("FHKST01010100");
 
 				KrStockPriceRequest request = KrStockPriceRequest.builder()
 						.fid_cond_mrkt_div_code("J")
