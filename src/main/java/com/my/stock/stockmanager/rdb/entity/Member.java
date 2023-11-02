@@ -45,4 +45,6 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LoginHistory> loginHistories;
 
+    private String loginId;
+
 }

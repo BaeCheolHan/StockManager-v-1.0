@@ -17,7 +17,8 @@ public class PersonalSetting {
 	private Long id;
 
 	@JsonBackReference
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Member member;
 
 	private Long defaultBankAccountId;

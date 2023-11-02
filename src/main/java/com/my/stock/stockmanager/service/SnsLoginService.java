@@ -54,8 +54,14 @@ public class SnsLoginService {
 						.snsType(SnsType.KAKAO)
 						.nickName(userInfo.getKakao_account().getProfile().getNickname())
 						.email(userInfo.getKakao_account().getEmail())
+								.loginId(userInfo.getId())
 						.build())
 				);
+
+		if(entity.getLoginId() == null) {
+			entity.setLoginId(userInfo.getId());
+			memberRepository.save(entity);
+		}
 
 		List<BankAccount> bankAccounts = entity.getBankAccount();
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();

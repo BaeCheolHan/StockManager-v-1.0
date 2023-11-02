@@ -16,7 +16,8 @@ public class PersonalBankAccountSetting extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private BankAccount bankAccount;
 	private String defaultNational;
 	private String defaultCode;

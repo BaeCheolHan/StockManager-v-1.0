@@ -21,7 +21,8 @@ public class LoginHistory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Member member;
 
 	@CreatedDate

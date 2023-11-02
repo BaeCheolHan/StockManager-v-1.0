@@ -28,7 +28,8 @@ public class Stock extends BaseTimeEntity {
 	private BigDecimal price;
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private BankAccount bankAccount;
 
 }
