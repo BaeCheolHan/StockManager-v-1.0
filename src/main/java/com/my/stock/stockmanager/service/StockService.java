@@ -248,7 +248,7 @@ public class StockService {
 		KrDailyStockChartPriceWrapper resp = kisApi.getKrDailyStockChartPrice(headers, request);
 
 		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
-		List<KrDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().sorted(Comparator.comparing(s -> LocalDate.parse(s.getStck_bsop_date(), dfm))).toList();
+		List<KrDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().filter(it -> it.getStck_bsop_date() != null).sorted(Comparator.comparing(s -> LocalDate.parse(s.getStck_bsop_date(), dfm))).toList();
 		resp.setOutput2(output2);
 
 		return resp.getOutput2().stream()
@@ -294,7 +294,7 @@ public class StockService {
 		Collections.reverse(resp.getOutput2());
 
 		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
-		List<OverSeaDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().sorted(Comparator.comparing(s -> LocalDate.parse(s.getXymd(), dfm))).toList();
+		List<OverSeaDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().filter(it -> it.getXymd() != null).sorted(Comparator.comparing(s -> LocalDate.parse(s.getXymd(), dfm))).toList();
 		resp.setOutput2(output2);
 
 		return resp.getOutput2().stream().filter(it -> it.getXymd() != null).map(it -> {
