@@ -19,6 +19,8 @@ public class OverSeaIndexChart {
 	@Id
 	private String code;
 
+	private String chartType;
+
 	private OverSeaDailyIndexChartPriceWrapper data;
 
 	@TimeToLive(unit = TimeUnit.MINUTES)

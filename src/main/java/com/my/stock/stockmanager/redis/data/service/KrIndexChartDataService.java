@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class KrIndexChartDataService {
 	private final KrIndexChartRepository krIndexChartRepository;
 
-	public KrIndexChart findByIdOrElseThrow(String id) throws StockManagerException {
-		return krIndexChartRepository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+	public KrIndexChart findByCodeAndChartTypeOrElseThrow(String id, String chartType) throws StockManagerException {
+		return krIndexChartRepository.findByCodeAndChartType(id, chartType).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 	}
 
 	public KrIndexChart save(KrIndexChart chart) {

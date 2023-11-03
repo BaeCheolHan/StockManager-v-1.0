@@ -18,6 +18,8 @@ public class KrIndexChart {
 	@Id
 	private String code;
 
+	private String chartType;
+
 	private KrDailyIndexChartPriceWrapper data;
 
 	@TimeToLive(unit = TimeUnit.MINUTES)
