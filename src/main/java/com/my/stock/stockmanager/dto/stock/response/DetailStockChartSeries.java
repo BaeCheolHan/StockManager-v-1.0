@@ -7,5 +7,8 @@ import lombok.Setter;
 @Setter
 public class DetailStockChartSeries {
 	private String date;
-	private String amount;
+	private String open;
+	private String high;
+	private String low;
+	private String close;
 }

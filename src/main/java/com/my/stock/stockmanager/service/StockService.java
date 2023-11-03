@@ -173,19 +173,6 @@ public class StockService {
 				sign = "minus";
 			}
 
-			HttpHeaders headers = kisApiUtils.getDefaultApiHeader("FHKST03010100");
-			headers.add("custtype", "P");
-
-			KrDailyStockChartPriceRequest request = KrDailyStockChartPriceRequest.builder()
-					.FID_COND_MRKT_DIV_CODE("J")
-					.FID_INPUT_ISCD(symbol)
-					.FID_INPUT_DATE_1(LocalDate.now().minusYears(1L).minusDays(2L).format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-					.FID_INPUT_DATE_2(LocalDate.now().minusDays(100L).format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-					.FID_PERIOD_DIV_CODE("D")
-					.FID_ORG_ADJ_PRC("0")
-					.build();
-			KrDailyStockChartPriceWrapper resp = kisApi.getKrDailyStockChartPrice(headers, request);
-			Collections.reverse(resp.getOutput2());
 			return DetailStockInfo.builder()
 					.compareToYesterday(entity.getPrdy_vrss())
 					.compareToYesterdaySign(sign)
@@ -265,7 +252,10 @@ public class StockService {
 		return resp.getOutput2().stream()
 				.filter(it -> it.getStck_bsop_date() != null).map(it -> {
 			DetailStockChartSeries series = new DetailStockChartSeries();
-			series.setAmount(it.getStck_clpr());
+			series.setOpen(it.getStck_oprc());
+			series.setHigh(it.getStck_hgpr());
+			series.setLow(it.getStck_lwpr());
+			series.setClose(it.getStck_clpr());
 			series.setDate(it.getStck_bsop_date());
 			return series;
 		}).collect(Collectors.toList());
@@ -304,7 +294,11 @@ public class StockService {
 		return resp.getOutput2().stream().filter(it -> it.getXymd() != null).map(it -> {
 			DetailStockChartSeries series = new DetailStockChartSeries();
 			series.setDate(it.getXymd());
-			series.setAmount(it.getClos());
+			series.setDate(it.getOpen());
+			series.setHigh(it.getHigh());
+			series.setLow(it.getLow());
+			series.setClose(it.getClos());
+//			series.setAmount(it.getClos());
 			return series;
 		}).collect(Collectors.toList());
 	}

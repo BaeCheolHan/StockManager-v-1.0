@@ -26,5 +26,7 @@ public interface KisApi {
 	@GetMapping("uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice")
 	KrDailyIndexChartPriceWrapper getKrInquireDailyIndexChartPrice(@RequestHeader HttpHeaders header, @SpringQueryMap KrDailyIndexChartPriceRequest param);
 
+	@GetMapping("uapi/overseas-price/v1/quotations/inquire-daily-chartprice")
+	OverSeaDailyIndexChartPriceWrapper getOverSeaInquireDailyChartPrice(@RequestHeader HttpHeaders header, @SpringQueryMap OverSeaDailyIndexChartPriceRequest param);
 
 }
