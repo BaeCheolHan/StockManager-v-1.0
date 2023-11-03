@@ -4,8 +4,7 @@ import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.kis.request.KrDailyStockChartPriceRequest;
 import com.my.stock.stockmanager.dto.kis.request.OverSeaDailyStockChartPriceRequest;
-import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceWrapper;
-import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.*;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
@@ -248,7 +247,10 @@ public class StockService {
 				.build();
 		KrDailyStockChartPriceWrapper resp = kisApi.getKrDailyStockChartPrice(headers, request);
 
-		Collections.reverse(resp.getOutput2());
+		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
+		List<KrDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().sorted(Comparator.comparing(s -> LocalDate.parse(s.getStck_bsop_date(), dfm))).toList();
+		resp.setOutput2(output2);
+
 		return resp.getOutput2().stream()
 				.filter(it -> it.getStck_bsop_date() != null).map(it -> {
 			DetailStockChartSeries series = new DetailStockChartSeries();
@@ -291,14 +293,17 @@ public class StockService {
 
 		Collections.reverse(resp.getOutput2());
 
+		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
+		List<OverSeaDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().sorted(Comparator.comparing(s -> LocalDate.parse(s.getXymd(), dfm))).toList();
+		resp.setOutput2(output2);
+
 		return resp.getOutput2().stream().filter(it -> it.getXymd() != null).map(it -> {
 			DetailStockChartSeries series = new DetailStockChartSeries();
 			series.setDate(it.getXymd());
-			series.setDate(it.getOpen());
+			series.setOpen(it.getOpen());
 			series.setHigh(it.getHigh());
 			series.setLow(it.getLow());
 			series.setClose(it.getClos());
-//			series.setAmount(it.getClos());
 			return series;
 		}).collect(Collectors.toList());
 	}
