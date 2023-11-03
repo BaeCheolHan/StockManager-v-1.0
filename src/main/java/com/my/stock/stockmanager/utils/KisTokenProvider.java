@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 @Component
@@ -29,10 +30,11 @@ public class KisTokenProvider {
 
 	public RestKisToken getRestToken() throws Exception {
 
-		List<RestKisToken> l = (List<RestKisToken>) restKisTokenRepository.findAll();
+		List<RestKisToken> list = (List<RestKisToken>) restKisTokenRepository.findAll();
 
-		if (!l.isEmpty()) {
-			return l.get(0);
+		boolean nullsOnly = list.stream().noneMatch(Objects::nonNull);
+		if (!nullsOnly) {
+			return list.get(0);
 		} else {
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("grant_type", "client_credentials");
