@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.List;
 public class ExchangeRateService {
 	@Value("${api.exchage-rate-api-url}")
 	private String exchangeRateApiUrl;
+
+	@Value("${api.ecos.key}")
+	private String ecosApiKey;
 	private final ExchangeRateRepository exchangeRateRepository;
 
 	public ExchangeRate getExchangeRate() throws IOException {
@@ -42,5 +46,18 @@ public class ExchangeRateService {
 			return list.get(list.size() - 1);
 		}
 
+	}
+
+	public void refresh() throws IOException {
+		exchangeRateRepository.deleteAll();
+
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("codes", "FRX.KRWUSD");
+		List<ExchangeRate> list = Arrays.asList(new ObjectMapper()
+				.readValue(ApiCaller.getInstance().get(exchangeRateApiUrl, param), ExchangeRate[].class));
+
+		list.forEach(exchangeRate -> exchangeRateRepository.save(exchangeRate));
 	}
 }

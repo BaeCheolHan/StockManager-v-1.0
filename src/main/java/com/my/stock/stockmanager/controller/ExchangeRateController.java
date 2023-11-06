@@ -20,4 +20,9 @@ public class ExchangeRateController {
 	public ExchangeRate getExchangeRate() throws IOException {
 		return exchangeRateService.getExchangeRate();
 	}
+
+	@GetMapping("/us")
+	public void getUSExchageRate() {
+		exchangeRateService.test();
+	}
 }

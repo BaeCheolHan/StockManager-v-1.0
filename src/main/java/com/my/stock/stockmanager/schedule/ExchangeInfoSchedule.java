@@ -17,7 +17,7 @@ public class ExchangeInfoSchedule {
 	@Async
 	@Scheduled(fixedRate = 1000 * 60 * 30)
 	public void scheduleFixedExchangeDollarRateTask() throws IOException {
-		exchangeRateService.getExchangeRate();
+		exchangeRateService.refresh();
 	}
 
 
