@@ -21,8 +21,4 @@ public class ExchangeRateController {
 		return exchangeRateService.getExchangeRate();
 	}
 
-	@GetMapping("/us")
-	public void getUSExchageRate() {
-		exchangeRateService.test();
-	}
 }
