@@ -2,6 +2,8 @@ package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dashboard.index.response.IndexChartResponse;
+import com.my.stock.stockmanager.dto.dashboard.volumerank.response.KrStockVolumeRankResponse;
+import com.my.stock.stockmanager.redis.entity.KrStockVolumeRank;
 import com.my.stock.stockmanager.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,5 +22,11 @@ public class DashboardController {
 	public IndexChartResponse getIndexChart(@PathVariable String chartType) throws Exception {
 		IndexChartResponse response = dashboardService.getIndexChart(chartType);
 		return response;
+	}
+
+	@GetMapping("/kr/volume/{id}")
+	public KrStockVolumeRankResponse getKrStockVolumeList(@PathVariable String id) throws Exception {
+		KrStockVolumeRank response = dashboardService.getKrStockVolumeList(id);
+		return new KrStockVolumeRankResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), response.getData().getOutput());
 	}
 }
