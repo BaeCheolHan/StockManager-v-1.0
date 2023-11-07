@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class DetailStockInfo {
+public class MyDetailStockInfo {
 	private BigDecimal startPrice;
 	private BigDecimal highPrice;
 	private BigDecimal lowPrice;

@@ -8,7 +8,8 @@ import com.my.stock.stockmanager.dto.kis.response.*;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
+import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
+import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
@@ -148,7 +149,7 @@ public class StockService {
 	}
 
 	@Transactional
-	public DetailStockInfo getDetail(Long memberId, String national, String code, String symbol) throws Exception {
+	public MyDetailStockInfo getMyDetailStock(Long memberId, String national, String code, String symbol) throws Exception {
 
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
@@ -172,7 +173,7 @@ public class StockService {
 				sign = "minus";
 			}
 
-			return DetailStockInfo.builder()
+			return MyDetailStockInfo.builder()
 					.compareToYesterday(entity.getPrdy_vrss())
 					.compareToYesterdaySign(sign)
 					.totalDividend(totalDividend)
@@ -203,7 +204,7 @@ public class StockService {
 				sign = "minus";
 			}
 
-			return DetailStockInfo.builder()
+			return MyDetailStockInfo.builder()
 					.compareToYesterday(compareToYesterday)
 					.compareToYesterdaySign(sign)
 					.totalDividend(totalDividend)
@@ -306,5 +307,15 @@ public class StockService {
 			series.setClose(it.getClos());
 			return series;
 		}).collect(Collectors.toList());
+	}
+
+	public DetailStockInfoResponse getDetailStock(String symbol) throws Exception {
+		KrNowStockPrice detail = krNowStockPriceDataService.findById(symbol);
+		return DetailStockInfoResponse.builder()
+				.code(ResponseCode.SUCCESS)
+				.message(ResponseCode.SUCCESS.getMessage())
+				.detail(detail)
+				.chartData(this.getKrDailyChart("D", symbol))
+				.build();
 	}
 }

@@ -2,18 +2,14 @@ package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeriesResponse;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockInfo;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
-import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfoResponse;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/stock")
@@ -37,9 +33,9 @@ public class StockController {
 	}
 
 	@GetMapping("/{memberId}/{national}/{code}")
-	public DetailStockInfoResponse getDetail(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
-		return DetailStockInfoResponse.builder()
-				.detail(service.getDetail(memberId, national, code, symbol))
+	public MyDetailStockInfoResponse getMyDetailStock(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
+		return MyDetailStockInfoResponse.builder()
+				.detail(service.getMyDetailStock(memberId, national, code, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
 				.build();
 	}
@@ -55,5 +51,10 @@ public class StockController {
 		return DetailStockChartSeriesResponse.builder().chartData(service.getDailyChartData(chartType, national, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
 				.build();
+	}
+
+	@GetMapping
+	public DetailStockInfoResponse getDetailStock(@RequestParam String symbol) throws Exception {
+		return service.getDetailStock(symbol);
 	}
 }
