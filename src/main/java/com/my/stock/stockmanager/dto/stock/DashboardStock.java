@@ -21,6 +21,9 @@ public class DashboardStock {
 	// 주식 현재가
 	private BigDecimal nowPrice;
 
+	private String compareToYesterdaySign;
+	private BigDecimal compareToYesterday;
+
 	private String rateOfReturnPer;
 
 

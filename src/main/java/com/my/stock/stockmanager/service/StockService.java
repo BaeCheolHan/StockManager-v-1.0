@@ -73,6 +73,23 @@ public class StockService {
 
 					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
+
+					BigDecimal base = it.getBase();
+					BigDecimal last = it.getLast();
+					BigDecimal compareToYesterday = base.subtract(last);
+
+					String sign;
+					if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
+						sign = "1";
+					} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
+						sign = "3";
+					} else {
+						sign = "5";
+					}
+
+					stock.setCompareToYesterdaySign(sign);
+					stock.setCompareToYesterday(compareToYesterday);
+
 				});
 			} else {
 				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
@@ -82,6 +99,9 @@ public class StockService {
 					BigDecimal avgPrice = stock.getAvgPrice();
 					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
 							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
+
+					stock.setCompareToYesterdaySign(it.getPrdy_vrss_sign());
+					stock.setCompareToYesterday(it.getPrdy_vrss());
 				});
 
 			}
@@ -164,18 +184,9 @@ public class StockService {
 			KrNowStockPrice entity = krNowStockPriceRepository.findById(symbol)
 					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 
-			String sign;
-			if (Integer.parseInt(entity.getPrdy_vrss_sign()) < 3) {
-				sign = "plus";
-			} else if (Integer.parseInt(entity.getPrdy_vrss_sign()) == 3) {
-				sign = "done";
-			} else {
-				sign = "minus";
-			}
-
 			return MyDetailStockInfo.builder()
 					.compareToYesterday(entity.getPrdy_vrss())
-					.compareToYesterdaySign(sign)
+					.compareToYesterdaySign(entity.getPrdy_vrss_sign())
 					.totalDividend(totalDividend)
 					.startPrice(entity.getStck_oprc())
 					.nowPrice(entity.getStck_prpr())
@@ -197,11 +208,11 @@ public class StockService {
 
 			String sign;
 			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
-				sign = "plus";
+				sign = "1";
 			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
-				sign = "done";
+				sign = "3";
 			} else {
-				sign = "minus";
+				sign = "5";
 			}
 
 			return MyDetailStockInfo.builder()
