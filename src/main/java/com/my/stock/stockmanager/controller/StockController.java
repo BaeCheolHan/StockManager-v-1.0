@@ -7,6 +7,7 @@ import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeriesResponse;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
 import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfoResponse;
+import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class StockController {
 	}
 
 	@DeleteMapping("/{id}")
-	public BaseResponse deleteStock(@PathVariable Long id) {
+	public BaseResponse deleteStock(@PathVariable Long id) throws StockManagerException {
 		service.deleteById(id);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}

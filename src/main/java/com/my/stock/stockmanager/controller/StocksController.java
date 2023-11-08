@@ -95,7 +95,7 @@ public class StocksController {
 	public BaseResponse saveKosdaq() {
 		Workbook workbook = null;
 		try {
-			File file = ResourceUtils.getFile("classpath:stock-list/ff_code.xlsx");
+			File file = ResourceUtils.getFile("classpath:stock-list/kosdaq_code.xlsx");
 			InputStream in = new FileInputStream(file);
 
 			workbook = new XSSFWorkbook(in);

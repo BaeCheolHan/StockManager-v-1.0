@@ -11,6 +11,8 @@ import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
 import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.mongodb.documents.MyStockList;
+import com.my.stock.stockmanager.mongodb.repository.MyStockListRepository;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
@@ -60,8 +62,23 @@ public class StockService {
 
 	private final KisApiUtils kisApiUtils;
 
+	private final MyStockListRepository myStockListRepository;
+
 	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
-		List<DashboardStock> stocks = stockRepository.findAllDashboardStock(memberId, bankId);
+
+		String id = String.format("%s%s", memberId.toString(), bankId == null ? "" : bankId.toString());
+		MyStockList myStocks = myStockListRepository.findById(id).orElse(null);
+
+		if(myStocks == null || myStocks.getData().isEmpty()) {
+			myStocks = new MyStockList();
+			List<DashboardStock> data = stockRepository.findAllDashboardStock(memberId, bankId);
+			myStocks.setData(data);
+			myStocks.setId(id);
+			myStockListRepository.save(myStocks);
+		}
+
+		List<DashboardStock> stocks = myStocks.getData();
+
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
@@ -157,6 +174,24 @@ public class StockService {
 			setNowPriceAndGetNowPrice(request.getSymbol());
 		}
 
+		// 특정 계좌 주식 내역 mongo Insert
+		updateMyStockList(account.getMember().getId(), account.getId());
+		// 전체 계좌 주식 내역 mongo Insert
+		updateMyStockList(account.getMember().getId(), null);
+	}
+
+	public void updateMyStockList(Long memberId, Long bankId) {
+		String mongoId = bankId == null ? memberId.toString() : String.format("%s%s", memberId, bankId);
+		MyStockList myStocks = myStockListRepository.findById(mongoId).orElse(null);
+
+		if(myStocks == null || myStocks.getData().isEmpty()) {
+			myStocks = new MyStockList();
+		}
+
+		List<DashboardStock> data = stockRepository.findAllDashboardStock(memberId, bankId);
+		myStocks.setData(data);
+		myStocks.setId(mongoId);
+		myStockListRepository.save(myStocks);
 	}
 
 	private BigDecimal setNowPriceAndGetNowPrice(String symbol) throws Exception {
@@ -233,8 +268,16 @@ public class StockService {
 		}
 	}
 
-	public void deleteById(Long id) {
+	@Transactional
+	public void deleteById(Long id) throws StockManagerException {
+		Stock stock = stockRepository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+		BankAccount account = stock.getBankAccount();
 		stockRepository.deleteById(id);
+
+		// 특정 계좌 주식 내역 mongo Insert
+		updateMyStockList(account.getMember().getId(), account.getId());
+		// 전체 계좌 주식 내역 mongo Insert
+		updateMyStockList(account.getMember().getId(), null);
 	}
 
 	public List<DetailStockChartSeries> getDailyChartData(String chartType, String national, String symbol) throws Exception {
