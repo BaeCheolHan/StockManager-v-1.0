@@ -12,10 +12,11 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class KakaoLoginResponse {
-	private KakaoProfile profile;
+public class LoginResponse {
+	private String nickName;
+	private String profileImgUrl;
 	private String email;
-	private Long memberId;
+	private String memberId;
 	private List<BankAccountDto> bankAccounts;
 	private ExchangeRate exchangeRate;
 	private Long defaultBankAccountId;

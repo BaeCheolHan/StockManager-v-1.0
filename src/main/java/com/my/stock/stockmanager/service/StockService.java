@@ -64,9 +64,9 @@ public class StockService {
 
 	private final MyStockListRepository myStockListRepository;
 
-	public List<DashboardStock> getStocks(Long memberId, Long bankId) {
+	public List<DashboardStock> getStocks(String memberId, Long bankId) {
 
-		String id = String.format("%s%s", memberId.toString(), bankId == null ? "" : bankId.toString());
+		String id = String.format("%s%s", memberId, bankId == null ? "" : bankId.toString());
 		MyStockList myStocks = myStockListRepository.findById(id).orElse(null);
 
 		if(myStocks == null || myStocks.getData().isEmpty()) {
@@ -180,7 +180,7 @@ public class StockService {
 		updateMyStockList(account.getMember().getId(), null);
 	}
 
-	public void updateMyStockList(Long memberId, Long bankId) {
+	public void updateMyStockList(String memberId, Long bankId) {
 		String mongoId = bankId == null ? memberId.toString() : String.format("%s%s", memberId, bankId);
 		MyStockList myStocks = myStockListRepository.findById(mongoId).orElse(null);
 
@@ -204,7 +204,7 @@ public class StockService {
 	}
 
 	@Transactional
-	public MyDetailStockInfo getMyDetailStock(Long memberId, String national, String code, String symbol) throws Exception {
+	public MyDetailStockInfo getMyDetailStock(String memberId, String national, String code, String symbol) throws Exception {
 
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));

@@ -19,7 +19,7 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<DashboardStock> findAllDashboardStock(Long memberId, Long bankId) {
+	public List<DashboardStock> findAllDashboardStock(String memberId, Long bankId) {
 		QStock stock = QStock.stock;
 		QStocks stocks = QStocks.stocks;
 		QBankAccount bankAccount = QBankAccount.bankAccount;

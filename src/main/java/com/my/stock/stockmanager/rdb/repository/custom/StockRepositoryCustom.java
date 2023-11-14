@@ -5,5 +5,5 @@ import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import java.util.List;
 
 public interface StockRepositoryCustom {
-	List<DashboardStock> findAllDashboardStock(Long memberId, Long bankId);
+	List<DashboardStock> findAllDashboardStock(String memberId, Long bankId);
 }

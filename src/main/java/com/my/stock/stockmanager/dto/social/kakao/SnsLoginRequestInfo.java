@@ -8,10 +8,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KakaoLogin extends BaseResponse {
+public class SnsLoginRequestInfo extends BaseResponse {
 	private String loginUri;
 	@Builder
-	public KakaoLogin(ResponseCode code, String message, String loginUri) {
+	public SnsLoginRequestInfo(ResponseCode code, String message, String loginUri) {
 		super(code, message);
 		this.loginUri = loginUri;
 	}

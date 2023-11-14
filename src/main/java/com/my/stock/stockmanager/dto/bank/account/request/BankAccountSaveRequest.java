@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class BankAccountSaveRequest {
-	private Long memberId;
+	private String memberId;
 	private String alias;
 	private Bank bank;
 }

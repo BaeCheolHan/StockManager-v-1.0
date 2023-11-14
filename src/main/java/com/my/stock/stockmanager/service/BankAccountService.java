@@ -57,13 +57,13 @@ public class BankAccountService {
 	}
 
 	@Transactional
-	public List<BankAccountDto> findBankAccountByMemberId(Long memberId) throws StockManagerException {
+	public List<BankAccountDto> findBankAccountByMemberId(String memberId) throws StockManagerException {
 		Member memberEntity = memberDataService.findById(memberId);
 		return memberEntity.getBankAccount().stream().map(BankAccountDto::new).collect(Collectors.toList());
 	}
 
 	@Transactional
-	public void saveDefaultBank(Long memberId, Long id) throws StockManagerException {
+	public void saveDefaultBank(String memberId, Long id) throws StockManagerException {
 		Member memberEntity = memberDataService.findById(memberId);
 		PersonalSetting setting = memberEntity.getPersonalSetting();
 

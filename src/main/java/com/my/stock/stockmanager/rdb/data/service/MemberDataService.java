@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class MemberDataService {
 	private final MemberRepository repository;
 
-	public Member findById(Long id) throws StockManagerException {
+	public Member findById(String id) throws StockManagerException {
 		return repository.findById(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 	}
 
-	public Member findByIdOrElseGetNew(Long id) {
+	public Member findByIdOrElseGetNew(String id) {
 		return repository.findById(id).orElseGet(Member::new);
 	}
 }

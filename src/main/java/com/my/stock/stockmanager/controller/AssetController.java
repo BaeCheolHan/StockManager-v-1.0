@@ -20,7 +20,7 @@ public class AssetController {
 	private final AssetService assetService;
 
 	@GetMapping("/member/{memberId}/chart")
-	public AssetChartResponse getAssetChart(@PathVariable Long memberId) throws StockManagerException {
+	public AssetChartResponse getAssetChart(@PathVariable String memberId) throws StockManagerException {
 		AssetChart result = assetService.getAssetChartData(memberId);
 		return new AssetChartResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), result);
 	}

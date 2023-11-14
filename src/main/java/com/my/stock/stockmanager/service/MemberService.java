@@ -19,7 +19,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member findById(Long id) throws StockManagerException {
+	public Member findById(String id) throws StockManagerException {
 		return memberDataService.findById(id);
 	}
 }

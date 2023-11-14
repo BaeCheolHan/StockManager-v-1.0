@@ -17,7 +17,7 @@ public class AssetService {
 	private final MemberDataService memberDataService;
 
 	@Transactional
-	public AssetChart getAssetChartData(Long memberId) throws StockManagerException {
+	public AssetChart getAssetChartData(String memberId) throws StockManagerException {
 		Member member = memberDataService.findById(memberId);
 		List<DailyTotalInvestmentAmount> dailyTotalInvestmentAmounts = member.getDailyTotalInvestmentAmounts();
 		AssetChart dto = new AssetChart();

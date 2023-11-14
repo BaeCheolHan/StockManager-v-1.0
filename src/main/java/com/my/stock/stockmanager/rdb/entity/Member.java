@@ -19,8 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Member extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Enumerated(EnumType.STRING)
     private SnsType snsType;

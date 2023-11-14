@@ -23,7 +23,7 @@ public class MemberController {
 	}
 
 	@GetMapping
-	public MemberResponse find(Long id) throws StockManagerException {
+	public MemberResponse find(String id) throws StockManagerException {
 		Member entity = memberService.findById(id);
 		return MemberResponse.builder().code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).data(entity).build();
 	}

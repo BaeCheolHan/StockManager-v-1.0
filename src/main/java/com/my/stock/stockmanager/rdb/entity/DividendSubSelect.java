@@ -20,7 +20,7 @@ public class DividendSubSelect {
 	@GeneratedValue
 	private Long id;
 
-	private Long memberId;
+	private String memberId;
 
 	private String symbol;
 

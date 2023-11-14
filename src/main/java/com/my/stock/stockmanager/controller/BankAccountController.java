@@ -31,7 +31,7 @@ public class BankAccountController {
 	}
 
 	@GetMapping("/bank/member/{memberId}")
-	public BankAccountResponse findBankAccountByMemberId(@PathVariable Long memberId) throws StockManagerException {
+	public BankAccountResponse findBankAccountByMemberId(@PathVariable String memberId) throws StockManagerException {
 		List<BankAccountDto> accounts = bankAccountService.findBankAccountByMemberId(memberId);
 		return new BankAccountResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), accounts);
 	}
@@ -45,7 +45,7 @@ public class BankAccountController {
 	}
 
 	@PutMapping("/default-bank/{memberId}/{id}")
-	public BaseResponse saveDefaultBank(@PathVariable Long memberId, @PathVariable Long id) throws StockManagerException {
+	public BaseResponse saveDefaultBank(@PathVariable String memberId, @PathVariable Long id) throws StockManagerException {
 		bankAccountService.saveDefaultBank(memberId, id);
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}

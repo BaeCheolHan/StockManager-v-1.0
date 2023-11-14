@@ -20,7 +20,7 @@ public class StockController {
 	private final StockService service;
 
 	@GetMapping({"/{memberId}", "/{memberId}/{bankId}"})
-	public DashboardStockResponse getStocks(@PathVariable Long memberId, @PathVariable(required = false) Long bankId) {
+	public DashboardStockResponse getStocks(@PathVariable String memberId, @PathVariable(required = false) Long bankId) {
 		return DashboardStockResponse.builder()
 				.stocks(service.getStocks(memberId, bankId))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
@@ -34,7 +34,7 @@ public class StockController {
 	}
 
 	@GetMapping("/{memberId}/{national}/{code}")
-	public MyDetailStockInfoResponse getMyDetailStock(@PathVariable Long memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
+	public MyDetailStockInfoResponse getMyDetailStock(@PathVariable String memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
 		return MyDetailStockInfoResponse.builder()
 				.detail(service.getMyDetailStock(memberId, national, code, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())

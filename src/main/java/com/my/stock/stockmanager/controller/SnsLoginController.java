@@ -1,6 +1,6 @@
 package com.my.stock.stockmanager.controller;
 
-import com.my.stock.stockmanager.dto.social.kakao.response.KakaoLoginResponse;
+import com.my.stock.stockmanager.dto.social.kakao.response.LoginResponse;
 import com.my.stock.stockmanager.service.SnsLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +15,13 @@ public class SnsLoginController {
 	private final SnsLoginService snsLoginService;
 
 	@GetMapping("/kakao")
-	public KakaoLoginResponse kakao(String code) throws Exception {
+	public LoginResponse kakao(String code) throws Exception {
 		return snsLoginService.kakaoLogin(code);
+	}
+
+	@GetMapping("/google")
+	public LoginResponse google(String code, String scope) {
+		return snsLoginService.googleLogin(code, scope);
 	}
 
 }
