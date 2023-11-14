@@ -4,7 +4,10 @@ import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.kis.request.KrDailyStockChartPriceRequest;
 import com.my.stock.stockmanager.dto.kis.request.OverSeaDailyStockChartPriceRequest;
-import com.my.stock.stockmanager.dto.kis.response.*;
+import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceOutput2;
+import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceWrapper;
+import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceOutput2;
+import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
@@ -47,11 +50,9 @@ public class StockService {
 
 	private final StockRepository stockRepository;
 	private final ExchangeRateRepository exchangeRateRepository;
-	private final KrNowStockPriceRepository krNowStockPriceRepository;
-	private final OverSeaNowStockPriceRepository overSeaNowStockPriceRepository;
+
 	private final MemberRepository memberRepository;
 	private final DividendRepository dividendRepository;
-
 
 	private final BankAccountDataService bankAccountDataService;
 	private final StocksDataService stocksDataService;
@@ -69,7 +70,7 @@ public class StockService {
 		String id = String.format("%s%s", memberId, bankId == null ? "" : bankId.toString());
 		MyStockList myStocks = myStockListRepository.findById(id).orElse(null);
 
-		if(myStocks == null || myStocks.getData().isEmpty()) {
+		if (myStocks == null || myStocks.getData().isEmpty()) {
 			myStocks = new MyStockList();
 			List<DashboardStock> data = stockRepository.findAllDashboardStock(memberId, bankId);
 			myStocks.setData(data);
@@ -82,44 +83,39 @@ public class StockService {
 		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
-				Optional<OverSeaNowStockPrice> entity = overSeaNowStockPriceRepository.findById(stock.getSymbol());
-				entity.ifPresent(it -> {
-					stock.setNowPrice(it.getLast());
-					BigDecimal nowPrice = it.getLast();
-					BigDecimal avgPrice = stock.getAvgPrice();
+				OverSeaNowStockPrice overSeaNowStockPrice = overSeaNowStockPriceDataService.findById(stock.getSymbol());
+				stock.setNowPrice(overSeaNowStockPrice.getLast());
+				BigDecimal nowPrice = overSeaNowStockPrice.getLast();
+				BigDecimal avgPrice = stock.getAvgPrice();
 
-					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
-							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
+				stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+						.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 
-					BigDecimal base = it.getBase();
-					BigDecimal last = it.getLast();
-					BigDecimal compareToYesterday = base.subtract(last);
+				BigDecimal base = overSeaNowStockPrice.getBase();
+				BigDecimal last = overSeaNowStockPrice.getLast();
+				BigDecimal compareToYesterday = base.subtract(last);
 
-					String sign;
-					if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
-						sign = "1";
-					} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
-						sign = "3";
-					} else {
-						sign = "5";
-					}
+				String sign;
+				if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
+					sign = "1";
+				} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
+					sign = "3";
+				} else {
+					sign = "5";
+				}
 
-					stock.setCompareToYesterdaySign(sign);
-					stock.setCompareToYesterday(compareToYesterday);
-
-				});
+				stock.setCompareToYesterdaySign(sign);
+				stock.setCompareToYesterday(compareToYesterday);
 			} else {
-				Optional<KrNowStockPrice> entity = krNowStockPriceRepository.findById(stock.getSymbol());
-				entity.ifPresent(it -> {
-					stock.setNowPrice(it.getStck_prpr());
-					BigDecimal nowPrice = it.getStck_prpr();
-					BigDecimal avgPrice = stock.getAvgPrice();
-					stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
-							.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
+				KrNowStockPrice krNowStockPrice = krNowStockPriceDataService.findById(stock.getSymbol());
+				stock.setNowPrice(krNowStockPrice.getStck_prpr());
+				BigDecimal nowPrice = krNowStockPrice.getStck_prpr();
+				BigDecimal avgPrice = stock.getAvgPrice();
+				stock.setRateOfReturnPer(nowPrice.subtract(avgPrice).divide(avgPrice, 4, RoundingMode.DOWN)
+						.multiply(BigDecimal.valueOf(100).setScale(2, RoundingMode.FLOOR)).toString());
 
-					stock.setCompareToYesterdaySign(it.getPrdy_vrss_sign());
-					stock.setCompareToYesterday(it.getPrdy_vrss());
-				});
+				stock.setCompareToYesterdaySign(krNowStockPrice.getPrdy_vrss_sign());
+				stock.setCompareToYesterday(krNowStockPrice.getPrdy_vrss());
 
 			}
 		});
@@ -184,7 +180,7 @@ public class StockService {
 		String mongoId = bankId == null ? memberId.toString() : String.format("%s%s", memberId, bankId);
 		MyStockList myStocks = myStockListRepository.findById(mongoId).orElse(null);
 
-		if(myStocks == null || myStocks.getData().isEmpty()) {
+		if (myStocks == null || myStocks.getData().isEmpty()) {
 			myStocks = new MyStockList();
 		}
 
@@ -216,8 +212,7 @@ public class StockService {
 		BigDecimal totalDividend = dividendRepository.findDividendSumByMemberIdAndSymbol(memberId, symbol);
 
 		if (national.equals("KR")) {
-			KrNowStockPrice entity = krNowStockPriceRepository.findById(symbol)
-					.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+			KrNowStockPrice entity = krNowStockPriceDataService.findById(symbol);
 
 			return MyDetailStockInfo.builder()
 					.compareToYesterday(entity.getPrdy_vrss())
@@ -308,14 +303,14 @@ public class StockService {
 
 		return resp.getOutput2().stream()
 				.filter(it -> it.getStck_bsop_date() != null).map(it -> {
-			DetailStockChartSeries series = new DetailStockChartSeries();
-			series.setOpen(it.getStck_oprc());
-			series.setHigh(it.getStck_hgpr());
-			series.setLow(it.getStck_lwpr());
-			series.setClose(it.getStck_clpr());
-			series.setDate(it.getStck_bsop_date());
-			return series;
-		}).collect(Collectors.toList());
+					DetailStockChartSeries series = new DetailStockChartSeries();
+					series.setOpen(it.getStck_oprc());
+					series.setHigh(it.getStck_hgpr());
+					series.setLow(it.getStck_lwpr());
+					series.setClose(it.getStck_clpr());
+					series.setDate(it.getStck_bsop_date());
+					return series;
+				}).collect(Collectors.toList());
 	}
 
 
