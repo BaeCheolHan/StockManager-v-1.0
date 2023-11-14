@@ -87,7 +87,7 @@ public class SnsLoginService {
 		LoginResponse resp = LoginResponse.builder()
 				.memberId(entity.getId())
 				.email(entity.getEmail())
-				.profileImgUrl(userInfo.getKakao_account().getProfile().getThumbnail_image_url())
+				.profileImgUrl(userInfo.getKakao_account().getProfile().getThumbnail_image_url().replace("http://", "https://"))
 				.nickName(userInfo.getKakao_account().getProfile().getNickname())
 				.exchangeRate(exchangeRateList.get(exchangeRateList.size() - 1))
 				.build();
