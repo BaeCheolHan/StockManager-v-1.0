@@ -137,7 +137,7 @@ public class SnsLoginService {
 		Member entity = memberRepository.findById(userInfo.getId())
 				.orElseGet(() -> memberRepository.save(Member.builder()
 						.id(userInfo.getId())
-						.snsType(SnsType.KAKAO)
+						.snsType(SnsType.GOOGLE)
 						.nickName(userInfo.getName())
 						.loginId(userInfo.getId())
 						.build())
