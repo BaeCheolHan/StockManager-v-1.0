@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.rdb.repository.custom.impl;
 
+import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
 import com.my.stock.stockmanager.dto.dividend.DividendInfo;
 import com.my.stock.stockmanager.rdb.entity.Dividend;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -57,6 +59,21 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 						.toArray(OrderSpecifier[]::new))
 				.fetch();
 
+	}
+
+	@Override
+	public List<DividendInfoByItem> findDividendInfoByMemberIdGroupBySymbol(String memberId, BigDecimal basePrice) {
+		QDividend dividend = QDividend.dividend1;
+		QStocks stocks = QStocks.stocks;
+
+		return queryFactory.from(dividend)
+				.select(Projections.fields(DividendInfoByItem.class, stocks.code, stocks.name, dividend.symbol, stocks.national
+						, stocks.national.when("KR").then(dividend.dividend.sum()).otherwise((dividend.dividend.sum()).multiply(basePrice)).as("totalDividend")
+						))
+				.innerJoin(stocks).on(dividend.symbol.eq(stocks.symbol))
+				.where(dividend.memberId.eq(memberId))
+				.groupBy(dividend.symbol)
+				.fetch();
 	}
 
 }

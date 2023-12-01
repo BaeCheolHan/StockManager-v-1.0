@@ -3,10 +3,12 @@ package com.my.stock.stockmanager.service;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.DividendChart;
 import com.my.stock.stockmanager.dto.dividend.DividendInfo;
+import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
 import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.rdb.entity.Dividend;
+import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
 import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,8 @@ public class DividendService {
 	private final DividendRepository repository;
 
 	private final StocksRepository stocksRepository;
+
+	private final ExchangeRateService exchangeRateService;
 
 	public void saveDividend(DividendRequest request) throws StockManagerException {
 
@@ -86,5 +89,12 @@ public class DividendService {
 	public List<DividendInfo> getDividends(String memberId) {
 		Sort sort = Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"));
 		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
+	}
+
+	public List<DividendInfoByItem> getAllDividendsByItm(String memberId) throws IOException {
+		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
+
+		return repository.findDividendInfoByMemberIdGroupBySymbol(memberId, exchangeRate.getBasePrice())
+				.stream().sorted(Comparator.comparing(DividendInfoByItem::getTotalDividend).reversed()).collect(Collectors.toList());
 	}
 }
