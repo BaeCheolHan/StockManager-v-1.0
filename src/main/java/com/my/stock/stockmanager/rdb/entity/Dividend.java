@@ -20,7 +20,7 @@ public class Dividend extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long memberId;
+    private String memberId;
 
     private int year;
 

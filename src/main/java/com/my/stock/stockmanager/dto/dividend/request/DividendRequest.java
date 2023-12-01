@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 public class DividendRequest {
 
-	private Long memberId;
+	private String memberId;
 	private String symbol;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate date;

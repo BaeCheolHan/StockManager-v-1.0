@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface DividendRepositoryCustom {
 
-	List<DividendSumByMonth> findDividendChartByMemberId(Long memberId);
-	List<DividendInfo> findAllByMemberIdOrderByYearMonthDayAsc(Long memberId, Sort sort);
+	List<DividendSumByMonth> findDividendChartByMemberId(String memberId);
+	List<DividendInfo> findAllByMemberIdOrderByYearMonthDayAsc(String memberId, Sort sort);
 }

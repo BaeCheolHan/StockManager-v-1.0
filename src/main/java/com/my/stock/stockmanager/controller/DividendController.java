@@ -24,12 +24,12 @@ public class DividendController {
 	}
 
 	@GetMapping("/{memberId}/chart")
-	public DividendChartResponse getDividendChartByMonth(@PathVariable Long memberId) {
+	public DividendChartResponse getDividendChartByMonth(@PathVariable String memberId) {
 		return new DividendChartResponse(dividendService.getDividendChart(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
 	@GetMapping("/member/{memberId}")
-	public DividendInfoResponse getDividends(@PathVariable Long memberId) {
+	public DividendInfoResponse getDividends(@PathVariable String memberId) {
 		return new DividendInfoResponse(dividendService.getDividends(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 }

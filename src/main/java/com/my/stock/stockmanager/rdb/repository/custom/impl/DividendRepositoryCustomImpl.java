@@ -25,7 +25,7 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<DividendSumByMonth> findDividendChartByMemberId(Long memberId) {
+	public List<DividendSumByMonth> findDividendChartByMemberId(String memberId) {
 		QDividend dividend = QDividend.dividend1;
 		QStocks stocks = QStocks.stocks;
 		QExchangeRate exchangeRate = QExchangeRate.exchangeRate;
@@ -43,7 +43,7 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 	}
 
 	@Override
-	public List<DividendInfo> findAllByMemberIdOrderByYearMonthDayAsc(Long memberId, Sort sorts) {
+	public List<DividendInfo> findAllByMemberIdOrderByYearMonthDayAsc(String memberId, Sort sorts) {
 		QDividend dividend = QDividend.dividend1;
 		QStocks stocks = QStocks.stocks;
 

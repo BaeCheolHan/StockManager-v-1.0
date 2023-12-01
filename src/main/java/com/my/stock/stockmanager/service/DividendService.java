@@ -46,7 +46,7 @@ public class DividendService {
 		repository.save(entity);
 	}
 
-	public List<DividendChart> getDividendChart(Long memberId) {
+	public List<DividendChart> getDividendChart(String memberId) {
 		List<Integer> years = repository.findYearByMemberIdGroupByYear(memberId);
 		List<DividendSumByMonth> yearAndMonthlyDividend = repository.findDividendChartByMemberId(memberId);
 
@@ -83,7 +83,7 @@ public class DividendService {
 	}
 
 	@Transactional
-	public List<DividendInfo> getDividends(Long memberId) {
+	public List<DividendInfo> getDividends(String memberId) {
 		Sort sort = Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"));
 		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
 	}
