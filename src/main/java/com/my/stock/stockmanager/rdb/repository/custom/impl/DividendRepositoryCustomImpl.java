@@ -68,7 +68,15 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 
 		return queryFactory.from(dividend)
 				.select(Projections.fields(DividendInfoByItem.class, stocks.code, stocks.name, dividend.symbol, stocks.national
-						, stocks.national.when("KR").then(dividend.dividend.sum()).otherwise((dividend.dividend.sum()).multiply(basePrice)).as("totalDividend")
+						, stocks.national
+								.when("KR")
+								.then(dividend.dividend.sum())
+								.otherwise((dividend.dividend.sum()).multiply(basePrice)).as("totalKrDividend")
+						, stocks.national
+								.when("KR")
+								.then(BigDecimal.ZERO)
+								.otherwise(dividend.dividend.sum())
+								.as("totalOverSeaDividend")
 						))
 				.innerJoin(stocks).on(dividend.symbol.eq(stocks.symbol))
 				.where(dividend.memberId.eq(memberId))

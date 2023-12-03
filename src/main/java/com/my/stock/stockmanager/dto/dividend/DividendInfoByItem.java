@@ -14,5 +14,6 @@ public class DividendInfoByItem {
 	private String name;
 	private String symbol;
 	private String national;
-	private BigDecimal totalDividend;
+	private BigDecimal totalKrDividend;
+	private BigDecimal totalOverSeaDividend;
 }

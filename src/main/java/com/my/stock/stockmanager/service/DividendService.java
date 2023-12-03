@@ -95,6 +95,6 @@ public class DividendService {
 		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
 
 		return repository.findDividendInfoByMemberIdGroupBySymbol(memberId, exchangeRate.getBasePrice())
-				.stream().sorted(Comparator.comparing(DividendInfoByItem::getTotalDividend).reversed()).collect(Collectors.toList());
+				.stream().sorted(Comparator.comparing(DividendInfoByItem::getTotalKrDividend).reversed()).collect(Collectors.toList());
 	}
 }
