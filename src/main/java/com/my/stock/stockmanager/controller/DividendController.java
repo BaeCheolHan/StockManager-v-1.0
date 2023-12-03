@@ -6,6 +6,7 @@ import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
 import com.my.stock.stockmanager.dto.dividend.response.DividendChartResponse;
 import com.my.stock.stockmanager.dto.dividend.response.DividendInfoByItemResponse;
 import com.my.stock.stockmanager.dto.dividend.response.DividendInfoResponse;
+import com.my.stock.stockmanager.dto.dividend.response.DividendResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.DividendService;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,12 @@ public class DividendController {
 	}
 
 	@GetMapping("/by-item/{memberId}")
-	public DividendInfoByItemResponse getAllDividendsByItm(@PathVariable String memberId) throws IOException {
-		return new DividendInfoByItemResponse(dividendService.getAllDividendsByItm(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	public DividendInfoByItemResponse getAllDividendsByItem(@PathVariable String memberId) throws IOException {
+		return new DividendInfoByItemResponse(dividendService.getAllDividendsByItem(memberId), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	}
+
+	@GetMapping("/by-item/{memberId}/{symbol}")
+	public DividendResponse getDividendsByItem(@PathVariable String memberId, @PathVariable String symbol) {
+		return new DividendResponse(dividendService.getDividendsByItem(memberId, symbol), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 }

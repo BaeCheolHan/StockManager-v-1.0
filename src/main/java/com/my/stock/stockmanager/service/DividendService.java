@@ -91,10 +91,15 @@ public class DividendService {
 		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
 	}
 
-	public List<DividendInfoByItem> getAllDividendsByItm(String memberId) throws IOException {
+	public List<DividendInfoByItem> getAllDividendsByItem(String memberId) throws IOException {
 		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
 
 		return repository.findDividendInfoByMemberIdGroupBySymbol(memberId, exchangeRate.getBasePrice())
 				.stream().sorted(Comparator.comparing(DividendInfoByItem::getTotalKrDividend).reversed()).collect(Collectors.toList());
+	}
+
+	public List<Dividend> getDividendsByItem(String memberId, String symbol) {
+		Sort sort = Sort.by(Sort.Order.asc("year"), Sort.Order.asc("month"), Sort.Order.asc("day"));
+		return repository.findAllDividendsByMemberIdAndSymbol(memberId, symbol, sort);
 	}
 }
