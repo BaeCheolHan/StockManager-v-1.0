@@ -29,22 +29,19 @@ public class LoginController {
 	@GetMapping("/{snsType}")
 	public ResponseEntity<SnsLoginRequestInfo> loginWithSns(@PathVariable String snsType) throws StockManagerException {
 
-		switch (snsType) {
-			case "kakao":
-				return new ResponseEntity<>(SnsLoginRequestInfo.builder()
-						.loginUri(String.format("https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code", code, kakaoCallbackUrl))
-						.code(ResponseCode.SUCCESS)
-						.message(ResponseCode.SUCCESS.getMessage())
-						.build(), HttpStatus.OK);
-			case "google":
-				return new ResponseEntity<>(SnsLoginRequestInfo.builder()
-						.loginUri(String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&scope=profile&response_type=code&redirect_uri=%s", googleClientId, googleCallbackUrl))
-						.code(ResponseCode.SUCCESS)
-						.message(ResponseCode.SUCCESS.getMessage())
-						.build(), HttpStatus.OK);
-			default:
-				throw new StockManagerException(ResponseCode.INVALID_ARGUMENT);
-		}
+		return switch (snsType) {
+			case "kakao" -> new ResponseEntity<>(SnsLoginRequestInfo.builder()
+					.loginUri(String.format("https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code", code, kakaoCallbackUrl))
+					.code(ResponseCode.SUCCESS)
+					.message(ResponseCode.SUCCESS.getMessage())
+					.build(), HttpStatus.OK);
+			case "google" -> new ResponseEntity<>(SnsLoginRequestInfo.builder()
+					.loginUri(String.format("https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&scope=profile&response_type=code&redirect_uri=%s", googleClientId, googleCallbackUrl))
+					.code(ResponseCode.SUCCESS)
+					.message(ResponseCode.SUCCESS.getMessage())
+					.build(), HttpStatus.OK);
+			default -> throw new StockManagerException(ResponseCode.INVALID_ARGUMENT);
+		};
 
 
 	}

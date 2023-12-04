@@ -20,8 +20,7 @@ public class DashboardController {
 
 	@GetMapping("/index-chart/{chartType}")
 	public IndexChartResponse getIndexChart(@PathVariable String chartType) throws Exception {
-		IndexChartResponse response = dashboardService.getIndexChart(chartType);
-		return response;
+		return dashboardService.getIndexChart(chartType);
 	}
 
 	@GetMapping("/kr/volume/{id}")

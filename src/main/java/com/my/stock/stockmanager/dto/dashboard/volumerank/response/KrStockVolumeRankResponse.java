@@ -2,10 +2,7 @@ package com.my.stock.stockmanager.dto.dashboard.volumerank.response;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.kis.response.KrDailyIndexChartPriceWrapper;
 import com.my.stock.stockmanager.dto.kis.response.KrStockVolumeRankOutput;
-import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyIndexChartPriceWrapper;
-import com.my.stock.stockmanager.redis.entity.KrStockVolumeRank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

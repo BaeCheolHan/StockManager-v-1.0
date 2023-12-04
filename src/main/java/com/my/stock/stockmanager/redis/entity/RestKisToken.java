@@ -6,8 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
-import java.util.concurrent.TimeUnit;
-
 @Getter
 @Setter
 @RedisHash("RestKisToken")
@@ -17,6 +15,6 @@ public class RestKisToken {
 	private String access_token_token_expired;
 	private String token_type;
 
-	@TimeToLive(unit = TimeUnit.SECONDS)
+	@TimeToLive
 	private int expires_in;
 }

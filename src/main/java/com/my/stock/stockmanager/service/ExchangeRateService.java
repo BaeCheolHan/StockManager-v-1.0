@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,7 @@ public class ExchangeRateService {
 			mapper.registerModule(new JavaTimeModule());
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("codes", "FRX.KRWUSD");
-			List<ExchangeRate> list = Arrays.asList(new ObjectMapper()
+			List<ExchangeRate> list = Arrays.asList(mapper
 					.readValue(ApiCaller.getInstance().get(exchangeRateApiUrl, param), ExchangeRate[].class));
 
 			list.forEach(exchangeRate -> {
@@ -55,9 +54,9 @@ public class ExchangeRateService {
 		mapper.registerModule(new JavaTimeModule());
 		HashMap<String, Object> param = new HashMap<>();
 		param.put("codes", "FRX.KRWUSD");
-		List<ExchangeRate> list = Arrays.asList(new ObjectMapper()
+		List<ExchangeRate> list = Arrays.asList(mapper
 				.readValue(ApiCaller.getInstance().get(exchangeRateApiUrl, param), ExchangeRate[].class));
 
-		list.forEach(exchangeRate -> exchangeRateRepository.save(exchangeRate));
+		exchangeRateRepository.saveAll(list);
 	}
 }

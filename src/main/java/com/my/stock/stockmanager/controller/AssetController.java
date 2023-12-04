@@ -3,7 +3,6 @@ package com.my.stock.stockmanager.controller;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.asset.AssetChart;
 import com.my.stock.stockmanager.dto.asset.Response.AssetChartResponse;
-import com.my.stock.stockmanager.dto.bank.account.response.BankAccountResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.AssetService;
 import lombok.RequiredArgsConstructor;

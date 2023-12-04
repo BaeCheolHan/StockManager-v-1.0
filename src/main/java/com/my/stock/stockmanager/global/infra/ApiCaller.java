@@ -5,14 +5,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ClientHttpResponse;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -77,7 +75,7 @@ public class ApiCaller {
 				.build();
 		restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-			public boolean hasError(ClientHttpResponse response) throws IOException {
+			public boolean hasError(ClientHttpResponse response) {
 				HttpStatus statusCode = (HttpStatus) response.getStatusCode();
 				return statusCode.series() == HttpStatus.Series.SERVER_ERROR;
 			}
@@ -97,7 +95,7 @@ public class ApiCaller {
 			} else if(mediaType.equals(MediaType.APPLICATION_FORM_URLENCODED)) {
 				StringBuilder sb = new StringBuilder();
 				for (Map.Entry<?,?> entry : param.entrySet()) {
-					if (sb.length() > 0) {
+					if (!sb.isEmpty()) {
 						sb.append("&");
 					}
 					sb.append(String.format("%s=%s",
@@ -135,7 +133,7 @@ public class ApiCaller {
 		} else if(mediaType.equals(MediaType.APPLICATION_FORM_URLENCODED)) {
 			StringBuilder sb = new StringBuilder();
 			for (Map.Entry<?,?> entry : param.entrySet()) {
-				if (sb.length() > 0) {
+				if (!sb.isEmpty()) {
 					sb.append("&");
 				}
 				sb.append(String.format("%s=%s",

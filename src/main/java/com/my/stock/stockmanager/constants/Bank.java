@@ -1,6 +1,7 @@
 package com.my.stock.stockmanager.constants;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
 
 public enum Bank implements BankEnumMapperType{
 	BOK("001", BankType.BANK, "한국은행"),
@@ -61,7 +62,9 @@ public enum Bank implements BankEnumMapperType{
 
 
 	private final String code;
+	@Getter
 	private final BankType type;
+	@Getter
 	private final String bankName;
 
 	Bank(String code, BankType type, String bankName) {
@@ -77,14 +80,6 @@ public enum Bank implements BankEnumMapperType{
 
 	public String getBankCode() {
 		return name();
-	}
-
-	public BankType getType() {
-		return type;
-	}
-
-	public String getBankName() {
-		return bankName;
 	}
 
 }

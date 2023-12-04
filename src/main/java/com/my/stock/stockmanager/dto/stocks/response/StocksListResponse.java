@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 public class StocksListResponse extends BaseResponse {
-	List<Stocks> stocksList;
+	final List<Stocks> stocksList;
 
 	@Builder
 	public StocksListResponse(List<Stocks> stocksList, ResponseCode code, String message) {

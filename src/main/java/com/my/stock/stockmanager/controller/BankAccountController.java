@@ -9,7 +9,6 @@ import com.my.stock.stockmanager.dto.bank.account.request.BankAccountSaveRequest
 import com.my.stock.stockmanager.dto.bank.account.response.BankAccountDto;
 import com.my.stock.stockmanager.dto.bank.account.response.BankAccountResponse;
 import com.my.stock.stockmanager.exception.StockManagerException;
-import com.my.stock.stockmanager.rdb.entity.BankAccount;
 import com.my.stock.stockmanager.service.BankAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 public class DividendChartResponse extends BaseResponse {
-	List<DividendChart> series;
+	final List<DividendChart> series;
 
 	@Builder
 	public DividendChartResponse(List<DividendChart> series, ResponseCode code, String message) {

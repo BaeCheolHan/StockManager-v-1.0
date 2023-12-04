@@ -27,8 +27,6 @@ import com.my.stock.stockmanager.redis.data.service.KrNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
-import com.my.stock.stockmanager.redis.repository.KrNowStockPriceRepository;
-import com.my.stock.stockmanager.redis.repository.OverSeaNowStockPriceRepository;
 import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -177,7 +175,7 @@ public class StockService {
 	}
 
 	public void updateMyStockList(String memberId, Long bankId) {
-		String mongoId = bankId == null ? memberId.toString() : String.format("%s%s", memberId, bankId);
+		String mongoId = bankId == null ? memberId : String.format("%s%s", memberId, bankId);
 		MyStockList myStocks = myStockListRepository.findById(mongoId).orElse(null);
 
 		if (myStocks == null || myStocks.getData().isEmpty()) {

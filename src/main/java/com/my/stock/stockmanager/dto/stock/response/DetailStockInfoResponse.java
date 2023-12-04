@@ -11,9 +11,9 @@ import java.util.List;
 @Getter
 public class DetailStockInfoResponse extends BaseResponse {
 
-	private KrNowStockPrice detail;
+	private final KrNowStockPrice detail;
 
-	private List<DetailStockChartSeries> chartData;
+	private final List<DetailStockChartSeries> chartData;
 
 	@Builder
 	public DetailStockInfoResponse( ResponseCode code, String message, KrNowStockPrice detail, List<DetailStockChartSeries> chartData) {

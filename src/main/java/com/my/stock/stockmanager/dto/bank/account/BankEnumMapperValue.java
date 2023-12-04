@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class BankEnumMapperValue {
-	private String code;
-	private String bankCode;
-	private String bankName;
+	private final String code;
+	private final String bankCode;
+	private final String bankName;
 
 	public BankEnumMapperValue(BankEnumMapperType bankType) {
 		this.code = bankType.getCode();

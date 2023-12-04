@@ -1,6 +1,5 @@
 package com.my.stock.stockmanager.redis.entity;
 
-import com.my.stock.stockmanager.dto.kis.response.KrDailyIndexChartPriceWrapper;
 import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyIndexChartPriceWrapper;
 import lombok.Builder;
 import lombok.Getter;

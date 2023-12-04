@@ -44,7 +44,7 @@ public class StocksController {
 
 	@PostMapping("/excel/oversea")
 	public BaseResponse saveOverSeaStocks() {
-		Workbook workbook = null;
+		Workbook workbook;
 		try {
 			File file = ResourceUtils.getFile("classpath:stock-list/overseas_stock_code(all).xlsx");
 			InputStream in = new FileInputStream(file);
@@ -61,14 +61,14 @@ public class StocksController {
 				repository.save(stocks);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
 
 	@PostMapping("/excel/kospi")
 	public BaseResponse saveKospi() {
-		Workbook workbook = null;
+		Workbook workbook;
 		try {
 			File file = ResourceUtils.getFile("classpath:stock-list/kospi_code.xlsx");
 			InputStream in = new FileInputStream(file);
@@ -85,7 +85,7 @@ public class StocksController {
 				repository.save(stocks);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
@@ -93,7 +93,7 @@ public class StocksController {
 
 	@PostMapping("/excel/kosdaq")
 	public BaseResponse saveKosdaq() {
-		Workbook workbook = null;
+		Workbook workbook;
 		try {
 			File file = ResourceUtils.getFile("classpath:stock-list/kosdaq_code.xlsx");
 			InputStream in = new FileInputStream(file);
@@ -110,7 +110,7 @@ public class StocksController {
 				repository.save(stocks);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class MyDetailStockInfoResponse extends BaseResponse {
 
-	MyDetailStockInfo detail;
+	final MyDetailStockInfo detail;
 
 	@Builder
 	public MyDetailStockInfoResponse(MyDetailStockInfo detail, ResponseCode code, String message) {
