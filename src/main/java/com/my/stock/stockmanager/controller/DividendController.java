@@ -46,4 +46,10 @@ public class DividendController {
 	public DividendResponse getDividendsByItem(@PathVariable String memberId, @PathVariable String symbol) {
 		return new DividendResponse(dividendService.getDividendsByItem(memberId, symbol), ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
 	}
+
+	@DeleteMapping("/{id}")
+	public BaseResponse removeDividend(@PathVariable Long id) {
+		dividendService.removeDividend(id);
+		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
+	}
 }

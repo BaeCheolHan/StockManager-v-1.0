@@ -102,4 +102,8 @@ public class DividendService {
 		Sort sort = Sort.by(Sort.Order.asc("year"), Sort.Order.asc("month"), Sort.Order.asc("day"));
 		return repository.findAllDividendsByMemberIdAndSymbol(memberId, symbol, sort);
 	}
+
+	public void removeDividend(Long id) {
+		repository.deleteById(id);
+	}
 }
