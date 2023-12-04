@@ -234,7 +234,7 @@ public class StockService {
 
 			BigDecimal base = entity.getBase();
 			BigDecimal last = entity.getLast();
-			BigDecimal compareToYesterday = base.subtract(last);
+			BigDecimal compareToYesterday = last.subtract(base);
 
 			String sign;
 			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
