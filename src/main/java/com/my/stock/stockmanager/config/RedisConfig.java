@@ -24,28 +24,20 @@ public class RedisConfig {
 	@Value("${spring.data.redis.cMode}")
 	private String cMode;
 
-	private RedisConfiguration redisConfiguration;
-	private LettuceConnectionFactory redisConnectionFactory;
 
 	@Bean
 	public RedisConfiguration redisStandaloneConfiguration() {
-		if (redisConfiguration == null) {
 			if ("Y".equals(cMode)) {
-				redisConfiguration = new RedisClusterConfiguration(Arrays.asList(redisHost.split(",")));
+				return new RedisClusterConfiguration(Arrays.asList(redisHost.split(",")));
 			} else {
 				String[] temp = redisHost.split(":");
-				redisConfiguration = new RedisStandaloneConfiguration(temp[0], Integer.parseInt(temp[1]));
+				return new RedisStandaloneConfiguration(temp[0], Integer.parseInt(temp[1]));
 			}
-		}
-		return redisConfiguration;
 	}
 
 	@Bean
 	public RedisConnectionFactory lettuceConnectionFactory() {
-		if (redisConnectionFactory == null) {
-			redisConnectionFactory = new LettuceConnectionFactory(redisStandaloneConfiguration());
-		}
-		return redisConnectionFactory;
+			return new LettuceConnectionFactory(redisStandaloneConfiguration());
 	}
 
 	@Bean
