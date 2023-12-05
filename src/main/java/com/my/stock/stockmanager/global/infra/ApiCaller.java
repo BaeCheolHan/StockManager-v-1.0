@@ -114,7 +114,7 @@ public class ApiCaller {
 
 	}
 
-	public String post(String url, HashMap<String, Object> param, MediaType mediaType) throws Exception {
+	public String post(String url, Map<String, Object> param, MediaType mediaType) throws Exception {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.setConnectTimeout(Duration.ofSeconds(10))
 				.setReadTimeout(Duration.ofSeconds(10))
