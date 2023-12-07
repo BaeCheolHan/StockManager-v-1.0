@@ -29,7 +29,7 @@ public class ApiCaller {
 
 	private ApiCaller() {}
 
-	public String get(String url, HashMap<String, Object> params) throws IOException {
+	public String get(String url, Map<String, Object> params) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		UriComponentsBuilder ucb = getUriComponentBuilder(new URL(url));
 		if (params != null) params.forEach(ucb::queryParam);
@@ -39,7 +39,7 @@ public class ApiCaller {
 		return responseEntity.getBody();
 	}
 
-	public String get(String url, HttpHeaders headers, HashMap<String, Object> params) throws IOException {
+	public String get(String url, HttpHeaders headers, Map<String, Object> params) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		UriComponentsBuilder ucb = getUriComponentBuilder(new URL(url));
 		if (params != null) params.forEach(ucb::queryParam);
@@ -49,7 +49,7 @@ public class ApiCaller {
 		return responseEntity.getBody();
 	}
 
-	public String post(String url, HashMap<String, Object> param) throws Exception {
+	public String post(String url, Map<String, Object> param) throws Exception {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.setConnectTimeout(Duration.ofSeconds(10))
 				.setReadTimeout(Duration.ofSeconds(10))
@@ -68,7 +68,7 @@ public class ApiCaller {
 		return responseEntity.getBody();
 	}
 
-	public <T> T post(String url, HashMap<String, Object> param, HttpHeaders headers, MediaType mediaType, Class<T> type) throws Exception {
+	public <T> T post(String url, Map<String, Object> param, HttpHeaders headers, MediaType mediaType, Class<T> type) throws Exception {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.setConnectTimeout(Duration.ofSeconds(10))
 				.setReadTimeout(Duration.ofSeconds(10))

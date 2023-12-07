@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DividendInfo {
+public class DividendInfoDto {
 	private Long id;
 	private int year;
 	private int month;

@@ -105,7 +105,12 @@ public class StockService {
 				stock.setCompareToYesterdaySign(sign);
 				stock.setCompareToYesterday(compareToYesterday);
 			} else {
-				KrNowStockPrice krNowStockPrice = krNowStockPriceDataService.findById(stock.getSymbol());
+				KrNowStockPrice krNowStockPrice;
+				try {
+					krNowStockPrice = krNowStockPriceDataService.findById(stock.getSymbol());
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 				stock.setNowPrice(krNowStockPrice.getStck_prpr());
 				BigDecimal nowPrice = krNowStockPrice.getStck_prpr();
 				BigDecimal avgPrice = stock.getAvgPrice();
@@ -226,6 +231,7 @@ public class StockService {
 					.bps(entity.getEps())
 					.stocks(stocks)
 					.chartData(this.getKrDailyChart("D", symbol))
+					.dividendInfo(entity.getDividendInfo())
 					.build();
 		} else {
 			OverSeaNowStockPrice entity = overSeaNowStockPriceDataService.findById(symbol);
@@ -257,6 +263,7 @@ public class StockService {
 					.bps(entity.getEpsx())
 					.stocks(stocks)
 					.chartData(this.getOverSeaDailyChart("D", symbol))
+					.dividendInfo(entity.getDividendInfo())
 					.build();
 		}
 	}

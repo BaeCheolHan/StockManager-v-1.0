@@ -108,6 +108,8 @@ public class OverSeaNowStockPrice {
 	// ETP 분류명
 	private String etyp_nm;
 
+	private DividendInfo dividendInfo;
+
 	@TimeToLive(unit = TimeUnit.MINUTES)
 	@Builder.Default
 	private Long expiration = 5L;

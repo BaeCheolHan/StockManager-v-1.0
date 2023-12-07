@@ -2,7 +2,7 @@ package com.my.stock.stockmanager.rdb.repository.custom.impl;
 
 import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
-import com.my.stock.stockmanager.dto.dividend.DividendInfo;
+import com.my.stock.stockmanager.dto.dividend.DividendInfoDto;
 import com.my.stock.stockmanager.rdb.entity.Dividend;
 import com.my.stock.stockmanager.rdb.entity.QDividend;
 import com.my.stock.stockmanager.rdb.entity.QExchangeRate;
@@ -45,12 +45,12 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 	}
 
 	@Override
-	public List<DividendInfo> findAllByMemberIdOrderByYearMonthDayAsc(String memberId, Sort sorts) {
+	public List<DividendInfoDto> findAllByMemberIdOrderByYearMonthDayAsc(String memberId, Sort sorts) {
 		QDividend dividend = QDividend.dividend1;
 		QStocks stocks = QStocks.stocks;
 
 		return queryFactory.from(dividend)
-				.select(Projections.fields(DividendInfo.class, dividend.id, dividend.year, dividend.month, dividend.day
+				.select(Projections.fields(DividendInfoDto.class, dividend.id, dividend.year, dividend.month, dividend.day
 						, dividend.symbol, dividend.dividend, stocks.code, stocks.name, stocks.national))
 				.innerJoin(stocks).on(dividend.symbol.eq(stocks.symbol))
 				.where(dividend.memberId.eq(memberId))

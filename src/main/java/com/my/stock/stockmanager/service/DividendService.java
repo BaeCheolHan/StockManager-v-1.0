@@ -2,7 +2,7 @@ package com.my.stock.stockmanager.service;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.DividendChart;
-import com.my.stock.stockmanager.dto.dividend.DividendInfo;
+import com.my.stock.stockmanager.dto.dividend.DividendInfoDto;
 import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
 import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
@@ -86,7 +86,7 @@ public class DividendService {
 	}
 
 	@Transactional
-	public List<DividendInfo> getDividends(String memberId) {
+	public List<DividendInfoDto> getDividends(String memberId) {
 		Sort sort = Sort.by(Sort.Order.desc("year"), Sort.Order.desc("month"), Sort.Order.desc("day"));
 		return repository.findAllByMemberIdOrderByYearMonthDayAsc(memberId, sort);
 	}
