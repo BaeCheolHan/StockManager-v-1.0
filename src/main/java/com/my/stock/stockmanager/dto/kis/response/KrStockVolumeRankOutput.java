@@ -44,4 +44,6 @@ public class KrStockVolumeRankOutput {
 	private String nday_tr_pbmn_tnrt;
 	// 누적 거래 대금
 	private String acml_tr_pbmn;
+
+	private String national = "KR";
 }
