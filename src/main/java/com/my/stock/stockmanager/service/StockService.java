@@ -11,7 +11,6 @@ import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceWra
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
 import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.mongodb.documents.MyStockList;
@@ -363,13 +362,56 @@ public class StockService {
 		}).collect(Collectors.toList());
 	}
 
-	public DetailStockInfoResponse getDetailStock(String symbol) throws Exception {
-		KrNowStockPrice detail = krNowStockPriceDataService.findById(symbol);
-		return DetailStockInfoResponse.builder()
-				.code(ResponseCode.SUCCESS)
-				.message(ResponseCode.SUCCESS.getMessage())
-				.detail(detail)
-				.chartData(this.getKrDailyChart("D", symbol))
-				.build();
+	public MyDetailStockInfo getDetailStock(String symbol) throws Exception {
+		Stocks stocks = stocksDataService.findBySymbol(symbol);
+		if (stocks.getNational().equals("KR")) {
+			KrNowStockPrice entity = krNowStockPriceDataService.findById(symbol);
+
+			return MyDetailStockInfo.builder()
+					.compareToYesterday(entity.getPrdy_vrss())
+					.compareToYesterdaySign(entity.getPrdy_vrss_sign())
+					.startPrice(entity.getStck_oprc())
+					.nowPrice(entity.getStck_prpr())
+					.highPrice(entity.getStck_hgpr())
+					.lowPrice(entity.getStck_lwpr())
+					.pbr(entity.getPbr())
+					.per(entity.getPer())
+					.eps(entity.getEps())
+					.bps(entity.getEps())
+					.chartData(this.getKrDailyChart("D", symbol))
+					.dividendInfo(entity.getDividendInfo())
+					.build();
+		} else {
+			OverSeaNowStockPrice entity = overSeaNowStockPriceDataService.findById(symbol);
+
+			BigDecimal base = entity.getBase();
+			BigDecimal last = entity.getLast();
+			BigDecimal compareToYesterday = last.subtract(base);
+
+			String sign;
+			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
+				sign = "1";
+			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
+				sign = "3";
+			} else {
+				sign = "5";
+			}
+
+			return MyDetailStockInfo.builder()
+					.compareToYesterday(compareToYesterday)
+					.compareToYesterdaySign(sign)
+					.startPrice(entity.getOpen())
+					.nowPrice(entity.getLast())
+					.highPrice(entity.getHigh())
+					.lowPrice(entity.getLow())
+					.pbr(entity.getPbrx())
+					.per(entity.getPerx())
+					.eps(entity.getEpsx())
+					.bps(entity.getEpsx())
+					.chartData(this.getOverSeaDailyChart("D", symbol))
+					.dividendInfo(entity.getDividendInfo())
+					.build();
+		}
+
 	}
 }

@@ -11,12 +11,12 @@ import java.util.List;
 @Getter
 public class DetailStockInfoResponse extends BaseResponse {
 
-	private final KrNowStockPrice detail;
+	private final MyDetailStockInfo detail;
 
 	private final List<DetailStockChartSeries> chartData;
 
 	@Builder
-	public DetailStockInfoResponse( ResponseCode code, String message, KrNowStockPrice detail, List<DetailStockChartSeries> chartData) {
+	public DetailStockInfoResponse( ResponseCode code, String message, MyDetailStockInfo detail, List<DetailStockChartSeries> chartData) {
 		super(code, message);
 		this.detail = detail;
 		this.chartData = chartData;

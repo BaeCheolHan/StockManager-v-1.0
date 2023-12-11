@@ -3,10 +3,7 @@ package com.my.stock.stockmanager.controller;
 import com.my.stock.stockmanager.base.response.BaseResponse;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
-import com.my.stock.stockmanager.dto.stock.response.DashboardStockResponse;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeriesResponse;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockInfoResponse;
-import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfoResponse;
+import com.my.stock.stockmanager.dto.stock.response.*;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +53,7 @@ public class StockController {
 
 	@GetMapping
 	public DetailStockInfoResponse getDetailStock(@RequestParam String symbol) throws Exception {
-		return service.getDetailStock(symbol);
+		MyDetailStockInfo info = service.getDetailStock(symbol);
+		return new DetailStockInfoResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), info, info.getChartData());
 	}
 }
