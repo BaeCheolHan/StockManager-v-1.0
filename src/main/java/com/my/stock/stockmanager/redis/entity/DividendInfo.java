@@ -27,7 +27,7 @@ public class DividendInfo {
 	@Builder.Default
 	private List<StockDividendHistory> dividendHistories = new ArrayList<>();
 
-	@TimeToLive(unit = TimeUnit.HOURS)
+	@TimeToLive
 	@Builder.Default
-	private Long expiration = 25L;
+	private Long expiration = 90000L;
 }
