@@ -20,7 +20,7 @@ public class BankAccountDataService {
 		return repository.findById(id).orElseGet(BankAccount::new);
 	}
 
-	public BankAccount findByIdJoinFetch(Long id) {
+	public BankAccount findByIdJoinFetch(Long id) throws StockManagerException {
 		return repository.findByIdJoinFetch(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
 	}
 }

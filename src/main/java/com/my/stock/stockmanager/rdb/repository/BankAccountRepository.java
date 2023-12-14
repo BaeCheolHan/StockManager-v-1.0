@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
 
 	@Query("SELECT b FROM BankAccount b JOIN FETCH b.stocks, b.myStockSnapShot WHERE b.id = :id")
-	Optional<Object> findByIdJoinFetch(Long id);
+	Optional<BankAccount> findByIdJoinFetch(Long id);
 }
