@@ -173,8 +173,9 @@ public class StockService {
 
 
 		mySnapShot.ifPresentOrElse(myStockSnapShot -> {
-
+		// 주식 존재하는 경우 스냅샷
 		}, () -> {
+			// 주식 없는경우 스냅샷
 			MyStockSnapShot snapShot = new MyStockSnapShot();
 			snapShot.setSymbol(request.getSymbol());
 			snapShot.setQuantity(request.getQuantity());
