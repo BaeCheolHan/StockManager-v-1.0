@@ -19,4 +19,8 @@ public class BankAccountDataService {
 	public BankAccount findByIdOrElseGetNew(Long id) {
 		return repository.findById(id).orElseGet(BankAccount::new);
 	}
+
+	public BankAccount findByIdJoinFetch(Long id) {
+		return repository.findByIdJoinFetch(id).orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
+	}
 }

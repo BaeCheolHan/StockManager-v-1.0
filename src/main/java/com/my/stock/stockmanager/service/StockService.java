@@ -18,10 +18,7 @@ import com.my.stock.stockmanager.mongodb.repository.MyStockListRepository;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
 import com.my.stock.stockmanager.rdb.entity.*;
-import com.my.stock.stockmanager.rdb.repository.DividendRepository;
-import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
-import com.my.stock.stockmanager.rdb.repository.MemberRepository;
-import com.my.stock.stockmanager.rdb.repository.StockRepository;
+import com.my.stock.stockmanager.rdb.repository.*;
 import com.my.stock.stockmanager.redis.data.service.KrNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
@@ -44,22 +41,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class StockService {
-
-	private final StockRepository stockRepository;
+	// redis
 	private final ExchangeRateRepository exchangeRateRepository;
-
-	private final MemberRepository memberRepository;
-	private final DividendRepository dividendRepository;
-
-	private final BankAccountDataService bankAccountDataService;
-	private final StocksDataService stocksDataService;
 	private final OverSeaNowStockPriceDataService overSeaNowStockPriceDataService;
 	private final KrNowStockPriceDataService krNowStockPriceDataService;
+	// rdb
+	private final StockRepository stockRepository;
+	private final MemberRepository memberRepository;
+	private final DividendRepository dividendRepository;
+	private final BankAccountDataService bankAccountDataService;
+	private final StocksDataService stocksDataService;
+	private final MyStockSnapShotRepository myStockSnapShotRepository;
+
 
 	private final KisApi kisApi;
 
 	private final KisApiUtils kisApiUtils;
 
+	// mongodb
 	private final MyStockListRepository myStockListRepository;
 
 	public List<DashboardStock> getStocks(String memberId, Long bankId) {
@@ -157,7 +156,7 @@ public class StockService {
 
 	@Transactional
 	public void saveStock(StockSaveRequest request) throws Exception {
-		BankAccount account = bankAccountDataService.findById(request.getBankId());
+		BankAccount account = bankAccountDataService.findByIdJoinFetch(request.getBankId());
 
 		Optional<Stock> existedStock = stockRepository.findFirstBySymbol(request.getSymbol());
 
@@ -168,9 +167,28 @@ public class StockService {
 		stock.setQuantity(request.getQuantity());
 		stockRepository.save(stock);
 
+		Optional<MyStockSnapShot> mySnapShot = account.getMyStockSnapShot().stream()
+				.filter(snapShot -> snapShot.getSymbol().equals(request.getSymbol()))
+				.findFirst();
+
+
+		mySnapShot.ifPresentOrElse(myStockSnapShot -> {
+
+		}, () -> {
+			MyStockSnapShot snapShot = new MyStockSnapShot();
+			snapShot.setSymbol(request.getSymbol());
+			snapShot.setQuantity(request.getQuantity());
+			snapShot.setAverPrice(request.getPrice());
+			snapShot.setBankAccount(account);
+			myStockSnapShotRepository.save(snapShot);
+		});
+
+
+
 		if (existedStock.isEmpty()) {
 			setNowPriceAndGetNowPrice(request.getSymbol());
 		}
+
 
 		// 특정 계좌 주식 내역 mongo Insert
 		updateMyStockList(account.getMember().getId(), account.getId());
