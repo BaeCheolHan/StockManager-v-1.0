@@ -24,6 +24,7 @@ import com.my.stock.stockmanager.redis.data.service.OverSeaNowStockPriceDataServ
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import com.my.stock.stockmanager.utils.KisApiUtils;
+import com.my.stock.stockmanager.utils.StockUiDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -53,13 +54,17 @@ public class StockService {
 	private final StocksDataService stocksDataService;
 	private final MyStockSnapShotRepository myStockSnapShotRepository;
 
+	// mongodb
+	private final MyStockListRepository myStockListRepository;
 
 	private final KisApi kisApi;
 
 	private final KisApiUtils kisApiUtils;
 
-	// mongodb
-	private final MyStockListRepository myStockListRepository;
+	private final StockUiDataUtils stockUiDataUtils;
+
+	private final ChartService chartService;
+
 
 	public List<DashboardStock> getStocks(String memberId, Long bankId) {
 
@@ -91,24 +96,11 @@ public class StockService {
 				BigDecimal last = overSeaNowStockPrice.getLast();
 				BigDecimal compareToYesterday = last.subtract(base);
 
-				String sign;
-				if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
-					sign = "1";
-				} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
-					sign = "3";
-				} else {
-					sign = "5";
-				}
-
-				stock.setCompareToYesterdaySign(sign);
+				stock.setCompareToYesterdaySign(stockUiDataUtils.getOverSeaCompareToYesterdaySign(compareToYesterday));
 				stock.setCompareToYesterday(compareToYesterday);
 			} else {
-				KrNowStockPrice krNowStockPrice;
-				try {
-					krNowStockPrice = krNowStockPriceDataService.findById(stock.getSymbol());
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+				KrNowStockPrice krNowStockPrice = krNowStockPriceDataService.findById(stock.getSymbol());
+
 				stock.setNowPrice(krNowStockPrice.getStck_prpr());
 				BigDecimal nowPrice = krNowStockPrice.getStck_prpr();
 				BigDecimal avgPrice = stock.getAvgPrice();
@@ -125,10 +117,10 @@ public class StockService {
 				.map(it -> {
 					if (it.getNowPrice() == null) {
 						try {
-							BigDecimal nowPrice = this.setNowPriceAndGetNowPrice(it.getSymbol());
+							BigDecimal nowPrice = this.getStockNowPrice(it.getSymbol());
 							it.setNowPrice(nowPrice);
 						} catch (Exception e) {
-							throw new RuntimeException(e);
+							it.setNowPrice(BigDecimal.ZERO);
 						}
 					}
 					if (!it.getNational().equals("KR")) {
@@ -173,7 +165,7 @@ public class StockService {
 
 
 		mySnapShot.ifPresentOrElse(myStockSnapShot -> {
-		// 주식 존재하는 경우 스냅샷
+			// 주식 존재하는 경우 스냅샷
 		}, () -> {
 			// 주식 없는경우 스냅샷
 			MyStockSnapShot snapShot = new MyStockSnapShot();
@@ -184,12 +176,9 @@ public class StockService {
 			myStockSnapShotRepository.save(snapShot);
 		});
 
-
-
 		if (existedStock.isEmpty()) {
-			setNowPriceAndGetNowPrice(request.getSymbol());
+			this.getStockNowPrice(request.getSymbol());
 		}
-
 
 		// 특정 계좌 주식 내역 mongo Insert
 		updateMyStockList(account.getMember().getId(), account.getId());
@@ -211,7 +200,7 @@ public class StockService {
 		myStockListRepository.save(myStocks);
 	}
 
-	private BigDecimal setNowPriceAndGetNowPrice(String symbol) throws Exception {
+	private BigDecimal getStockNowPrice(String symbol) throws StockManagerException {
 		Stocks stocks = stocksDataService.findBySymbol(symbol);
 		if (!stocks.getNational().equals("KR")) {
 			return overSeaNowStockPriceDataService.findById(symbol).getLast();
@@ -221,7 +210,7 @@ public class StockService {
 	}
 
 	@Transactional
-	public MyDetailStockInfo getMyDetailStock(String memberId, String national, String code, String symbol) throws Exception {
+	public MyDetailStockInfo getMyDetailStock(String memberId, String national, String symbol) throws Exception {
 
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new StockManagerException(ResponseCode.NOT_FOUND_ID));
@@ -248,7 +237,7 @@ public class StockService {
 					.eps(entity.getEps())
 					.bps(entity.getEps())
 					.stocks(stocks)
-					.chartData(this.getKrDailyChart("D", symbol))
+					.chartData(chartService.getDailyChartData("D", national, symbol))
 					.dividendInfo(entity.getDividendInfo())
 					.build();
 		} else {
@@ -258,18 +247,9 @@ public class StockService {
 			BigDecimal last = entity.getLast();
 			BigDecimal compareToYesterday = last.subtract(base);
 
-			String sign;
-			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
-				sign = "1";
-			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
-				sign = "3";
-			} else {
-				sign = "5";
-			}
-
 			return MyDetailStockInfo.builder()
 					.compareToYesterday(compareToYesterday)
-					.compareToYesterdaySign(sign)
+					.compareToYesterdaySign(stockUiDataUtils.getOverSeaCompareToYesterdaySign(compareToYesterday))
 					.totalDividend(totalDividend)
 					.startPrice(entity.getOpen())
 					.nowPrice(entity.getLast())
@@ -280,7 +260,7 @@ public class StockService {
 					.eps(entity.getEpsx())
 					.bps(entity.getEpsx())
 					.stocks(stocks)
-					.chartData(this.getOverSeaDailyChart("D", symbol))
+					.chartData(chartService.getDailyChartData("D", national, symbol))
 					.dividendInfo(entity.getDividendInfo())
 					.build();
 		}
@@ -296,89 +276,6 @@ public class StockService {
 		updateMyStockList(account.getMember().getId(), account.getId());
 		// 전체 계좌 주식 내역 mongo Insert
 		updateMyStockList(account.getMember().getId(), null);
-	}
-
-	public List<DetailStockChartSeries> getDailyChartData(String chartType, String national, String symbol) throws Exception {
-		if (national.equals("KR")) {
-			return this.getKrDailyChart(chartType, symbol);
-		} else {
-			return this.getOverSeaDailyChart(chartType, symbol);
-		}
-	}
-
-	public List<DetailStockChartSeries> getKrDailyChart(String chartType, String symbol) throws Exception {
-		HttpHeaders headers = kisApiUtils.getDefaultApiHeader("FHKST03010100");
-		headers.add("custtype", "P");
-
-		KrDailyStockChartPriceRequest request = KrDailyStockChartPriceRequest.builder()
-				.FID_COND_MRKT_DIV_CODE("J")
-				.FID_INPUT_ISCD(symbol)
-				.FID_INPUT_DATE_1(LocalDate.now().minusYears(100L).minusDays(1L).format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-				.FID_INPUT_DATE_2(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-				.FID_PERIOD_DIV_CODE(chartType)
-				.FID_ORG_ADJ_PRC("0")
-				.build();
-		KrDailyStockChartPriceWrapper resp = kisApi.getKrDailyStockChartPrice(headers, request);
-
-		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
-		List<KrDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().filter(it -> it.getStck_bsop_date() != null).sorted(Comparator.comparing(s -> LocalDate.parse(s.getStck_bsop_date(), dfm))).toList();
-		resp.setOutput2(output2);
-
-		return resp.getOutput2().stream()
-				.filter(it -> it.getStck_bsop_date() != null).map(it -> {
-					DetailStockChartSeries series = new DetailStockChartSeries();
-					series.setOpen(it.getStck_oprc());
-					series.setHigh(it.getStck_hgpr());
-					series.setLow(it.getStck_lwpr());
-					series.setClose(it.getStck_clpr());
-					series.setDate(it.getStck_bsop_date());
-					return series;
-				}).collect(Collectors.toList());
-	}
-
-
-	public List<DetailStockChartSeries> getOverSeaDailyChart(String chartType, String symbol) throws Exception {
-		HttpHeaders headers = kisApiUtils.getDefaultApiHeader("HHDFS76240000");
-		headers.add("custtype", "P");
-		Stocks stock = stocksDataService.findBySymbol(symbol);
-
-		String gubnValue = "0";
-
-		if (chartType.equals("D")) {
-			gubnValue = "0";
-		}
-		if (chartType.equals("W")) {
-			gubnValue = "1";
-		}
-		if (chartType.equals("M")) {
-			gubnValue = "2";
-		}
-		OverSeaDailyStockChartPriceRequest request = OverSeaDailyStockChartPriceRequest.builder()
-				.AUTH("")
-				.EXCD(stock.getCode())
-				.SYMB(stock.getSymbol())
-				.GUBN(gubnValue)
-				.BYMD(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-				.MODP("1")
-				.build();
-
-		OverSeaDailyStockChartPriceWrapper resp = kisApi.getOverSeaDailyStockChartPrice(headers, request);
-
-		Collections.reverse(resp.getOutput2());
-
-		final DateTimeFormatter dfm = DateTimeFormatter.ofPattern("yyyyMMdd");
-		List<OverSeaDailyStockChartPriceOutput2> output2 = resp.getOutput2().stream().filter(it -> it.getXymd() != null).sorted(Comparator.comparing(s -> LocalDate.parse(s.getXymd(), dfm))).toList();
-		resp.setOutput2(output2);
-
-		return resp.getOutput2().stream().filter(it -> it.getXymd() != null).map(it -> {
-			DetailStockChartSeries series = new DetailStockChartSeries();
-			series.setDate(it.getXymd());
-			series.setOpen(it.getOpen());
-			series.setHigh(it.getHigh());
-			series.setLow(it.getLow());
-			series.setClose(it.getClos());
-			return series;
-		}).collect(Collectors.toList());
 	}
 
 	public MyDetailStockInfo getDetailStock(String symbol) throws Exception {
@@ -397,7 +294,7 @@ public class StockService {
 					.per(entity.getPer())
 					.eps(entity.getEps())
 					.bps(entity.getEps())
-					.chartData(this.getKrDailyChart("D", symbol))
+					.chartData(chartService.getDailyChartData("D", stocks.getNational(), symbol))
 					.dividendInfo(entity.getDividendInfo())
 					.build();
 		} else {
@@ -407,18 +304,9 @@ public class StockService {
 			BigDecimal last = entity.getLast();
 			BigDecimal compareToYesterday = last.subtract(base);
 
-			String sign;
-			if (compareToYesterday.compareTo(BigDecimal.ZERO) > 0) {
-				sign = "1";
-			} else if (compareToYesterday.compareTo(BigDecimal.ZERO) == 0) {
-				sign = "3";
-			} else {
-				sign = "5";
-			}
-
 			return MyDetailStockInfo.builder()
 					.compareToYesterday(compareToYesterday)
-					.compareToYesterdaySign(sign)
+					.compareToYesterdaySign(stockUiDataUtils.getOverSeaCompareToYesterdaySign(compareToYesterday))
 					.startPrice(entity.getOpen())
 					.nowPrice(entity.getLast())
 					.highPrice(entity.getHigh())
@@ -427,7 +315,7 @@ public class StockService {
 					.per(entity.getPerx())
 					.eps(entity.getEpsx())
 					.bps(entity.getEpsx())
-					.chartData(this.getOverSeaDailyChart("D", symbol))
+					.chartData(chartService.getDailyChartData("D", stocks.getNational(), symbol))
 					.dividendInfo(entity.getDividendInfo())
 					.build();
 		}

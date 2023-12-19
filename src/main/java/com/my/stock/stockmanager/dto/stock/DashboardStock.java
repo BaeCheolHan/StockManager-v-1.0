@@ -24,6 +24,7 @@ public class DashboardStock {
 	private String compareToYesterdaySign;
 	private BigDecimal compareToYesterday;
 
+	// 수익률
 	private String rateOfReturnPer;
 
 

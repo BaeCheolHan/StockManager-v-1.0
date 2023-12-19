@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.redis.entity.RestKisToken;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +31,7 @@ public class KisTokenProvider {
 	private final RestKisTokenRepository restKisTokenRepository;
 
 
-	public RestKisToken getRestToken() throws Exception {
+	public RestKisToken getRestToken() throws MalformedURLException, JsonProcessingException {
 
 		List<RestKisToken> list = (List<RestKisToken>) restKisTokenRepository.findAll();
 

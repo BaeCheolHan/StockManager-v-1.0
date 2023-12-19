@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.global.infra;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -11,6 +12,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +51,7 @@ public class ApiCaller {
 		return responseEntity.getBody();
 	}
 
-	public String post(String url, Map<String, Object> param) throws Exception {
+	public String post(String url, Map<String, Object> param) throws MalformedURLException, JsonProcessingException {
 		RestTemplate restTemplate = new RestTemplateBuilder()
 				.setConnectTimeout(Duration.ofSeconds(10))
 				.setReadTimeout(Duration.ofSeconds(10))

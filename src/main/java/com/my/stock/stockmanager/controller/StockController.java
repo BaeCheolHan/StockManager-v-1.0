@@ -5,6 +5,7 @@ import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.*;
 import com.my.stock.stockmanager.exception.StockManagerException;
+import com.my.stock.stockmanager.service.ChartService;
 import com.my.stock.stockmanager.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class StockController {
 
 	private final StockService service;
+	private final ChartService chartService;
 
 	@GetMapping({"/{memberId}", "/{memberId}/{bankId}"})
 	public DashboardStockResponse getStocks(@PathVariable String memberId, @PathVariable(required = false) Long bankId) {
@@ -33,7 +35,7 @@ public class StockController {
 	@GetMapping("/{memberId}/{national}/{code}")
 	public MyDetailStockInfoResponse getMyDetailStock(@PathVariable String memberId, @PathVariable String national, @PathVariable String code, String symbol) throws Exception {
 		return MyDetailStockInfoResponse.builder()
-				.detail(service.getMyDetailStock(memberId, national, code, symbol))
+				.detail(service.getMyDetailStock(memberId, national, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
 				.build();
 	}
@@ -46,7 +48,7 @@ public class StockController {
 
 	@GetMapping("/chart/{chartType}/{national}/{symbol}")
 	public DetailStockChartSeriesResponse getDailyChartData(@PathVariable String chartType, @PathVariable String national, @PathVariable String symbol) throws Exception {
-		return DetailStockChartSeriesResponse.builder().chartData(service.getDailyChartData(chartType, national, symbol))
+		return DetailStockChartSeriesResponse.builder().chartData(chartService.getDailyChartData(chartType, national, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
 				.build();
 	}

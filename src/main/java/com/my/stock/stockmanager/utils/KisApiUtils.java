@@ -1,10 +1,13 @@
 package com.my.stock.stockmanager.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.my.stock.stockmanager.redis.entity.RestKisToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+
+import java.net.MalformedURLException;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +20,7 @@ public class KisApiUtils {
 
 	private final KisTokenProvider kisTokenProvider;
 
-	public HttpHeaders getDefaultApiHeader(String transactionId) throws Exception {
+	public HttpHeaders getDefaultApiHeader(String transactionId) throws MalformedURLException, JsonProcessingException {
 		RestKisToken kisToken = kisTokenProvider.getRestToken();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("authorization", String.format("%s %s", kisToken.getToken_type(), kisToken.getAccess_token()));
