@@ -3,7 +3,6 @@ package com.my.stock.stockmanager.redis.data.service;
 import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.dto.kis.request.KrStockPriceRequest;
 import com.my.stock.stockmanager.dto.kis.response.KrNowStockPriceWrapper;
-import com.my.stock.stockmanager.global.infra.ApiCaller;
 import com.my.stock.stockmanager.redis.entity.DividendInfo;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.repository.DividendInfoRepository;
@@ -12,10 +11,6 @@ import com.my.stock.stockmanager.utils.KisApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +49,7 @@ public class KrNowStockPriceDataService {
 			}
 		});
 
-		if(price.getDividendInfo() == null) {
+		if (price.getDividendInfo() == null) {
 			DividendInfo dividendInfo = dividendInfoDataService.findByIdOrElseNew(symbol);
 			price.setDividendInfo(dividendInfo);
 			krNowStockPriceRepository.save(price);
