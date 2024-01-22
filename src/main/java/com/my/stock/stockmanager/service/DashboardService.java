@@ -42,7 +42,9 @@ public class DashboardService {
 
 		OverSeaIndexChart snp = this.getOverSeaIndexChart("snp", "SPX", chartType);
 		OverSeaIndexChart nasdaq = this.getOverSeaIndexChart("nasdaq", "COMP", chartType);
-		return new IndexChartResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), kospi.getData(), kosdaq.getData(), snp.getData(), nasdaq.getData());
+		OverSeaIndexChart daw = this.getOverSeaIndexChart("daw", ".DJI", chartType);
+		OverSeaIndexChart philadelphia = this.getOverSeaIndexChart("philadelphia", "SOX", chartType);
+		return new IndexChartResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage(), kospi.getData(), kosdaq.getData(), snp.getData(), nasdaq.getData(), daw.getData(), philadelphia.getData());
 	}
 
 	private OverSeaIndexChart getOverSeaIndexChart(String id, String code, String chartType) throws Exception {

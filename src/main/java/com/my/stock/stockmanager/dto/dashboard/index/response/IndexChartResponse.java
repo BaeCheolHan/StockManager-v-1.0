@@ -16,15 +16,19 @@ public class IndexChartResponse extends BaseResponse {
 
 	private OverSeaDailyIndexChartPriceWrapper snp;
 	private OverSeaDailyIndexChartPriceWrapper nasdaq;
+	private OverSeaDailyIndexChartPriceWrapper daw;
+	private OverSeaDailyIndexChartPriceWrapper philadelphia;
 
 
 	@Builder
-	public IndexChartResponse(ResponseCode code, String message, KrDailyIndexChartPriceWrapper kospi, KrDailyIndexChartPriceWrapper kosdaq, OverSeaDailyIndexChartPriceWrapper snp, OverSeaDailyIndexChartPriceWrapper nasdaq) {
+	public IndexChartResponse(ResponseCode code, String message, KrDailyIndexChartPriceWrapper kospi, KrDailyIndexChartPriceWrapper kosdaq, OverSeaDailyIndexChartPriceWrapper snp, OverSeaDailyIndexChartPriceWrapper nasdaq, OverSeaDailyIndexChartPriceWrapper daw, OverSeaDailyIndexChartPriceWrapper philadelphia) {
 		super(code, message);
 		this.kospi = kospi;
 		this.kosdaq = kosdaq;
 		this.snp = snp;
 		this.nasdaq = nasdaq;
+		this.daw = daw;
+		this.philadelphia = philadelphia;
 	}
 
 }
