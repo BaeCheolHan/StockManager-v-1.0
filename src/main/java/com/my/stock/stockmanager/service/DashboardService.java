@@ -109,35 +109,6 @@ public class DashboardService {
 	}
 
 	public KrStockVolumeRank getKrStockVolumeList(String id) throws Exception {
-		KrStockVolumeRank entity;
-
-		try {
-			entity = krStockVolumeRankDataService.findByIdOrElseThrow(id);
-		} catch (StockManagerException e) {
-			HttpHeaders headers;
-			headers = kisApiUtils.getDefaultApiHeader("FHPST01710000");
-			KrStockVolumeRankRequest request = KrStockVolumeRankRequest.builder()
-					.FID_COND_MRKT_DIV_CODE("J")
-					.FID_COND_SCR_DIV_CODE("20171")
-					.FID_INPUT_ISCD(id)
-					.FID_DIV_CLS_CODE("0")
-					.FID_BLNG_CLS_CODE("0")
-					.FID_TRGT_CLS_CODE("111111111")
-					.FID_TRGT_EXLS_CLS_CODE("000000")
-					.FID_INPUT_PRICE_1("0")
-					.FID_INPUT_PRICE_2("0")
-					.FID_VOL_CNT("0")
-					.FID_INPUT_DATE_1("0")
-					.build();
-			KrStockVolumeRankWrapper resp = kisApi.getStockVolumeRank(headers, request);
-			entity = new KrStockVolumeRank();
-			entity.setId("0000");
-			entity.setData(resp);
-
-			krStockVolumeRankDataService.save(entity);
-		}
-
-		return entity;
-
+		return krStockVolumeRankDataService.findById(id);
 	}
 }

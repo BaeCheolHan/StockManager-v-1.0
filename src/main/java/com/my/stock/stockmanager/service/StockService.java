@@ -57,10 +57,6 @@ public class StockService {
 	// mongodb
 	private final MyStockListRepository myStockListRepository;
 
-	private final KisApi kisApi;
-
-	private final KisApiUtils kisApiUtils;
-
 	private final StockUiDataUtils stockUiDataUtils;
 
 	private final ChartService chartService;

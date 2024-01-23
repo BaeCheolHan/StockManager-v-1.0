@@ -26,7 +26,6 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api")
 public class StocksController {
-	private final StocksRepository repository;
 
 	private final StocksService stocksService;
 
@@ -42,77 +41,4 @@ public class StocksController {
 		return StocksCodeListResponse.builder().codes(list).code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage()).build();
 	}
 
-	@PostMapping("/excel/oversea")
-	public BaseResponse saveOverSeaStocks() {
-		Workbook workbook;
-		try {
-			File file = ResourceUtils.getFile("classpath:stock-list/overseas_stock_code(all).xlsx");
-			InputStream in = new FileInputStream(file);
-
-			workbook = new XSSFWorkbook(in);
-			Sheet sheet = workbook.getSheetAt(0);
-			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-				Stocks stocks = new Stocks();
-				stocks.setNational(String.valueOf(sheet.getRow(i).getCell(0)));
-				stocks.setSymbol(String.valueOf(sheet.getRow(i).getCell(4)));
-				stocks.setCode(String.valueOf(sheet.getRow(i).getCell(2)));
-				stocks.setName(String.valueOf(sheet.getRow(i).getCell(6)));
-				stocks.setCurrency(String.valueOf(sheet.getRow(i).getCell(9)));
-				repository.save(stocks);
-			}
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
-	}
-
-	@PostMapping("/excel/kospi")
-	public BaseResponse saveKospi() {
-		Workbook workbook;
-		try {
-			File file = ResourceUtils.getFile("classpath:stock-list/kospi_code.xlsx");
-			InputStream in = new FileInputStream(file);
-
-			workbook = new XSSFWorkbook(in);
-			Sheet sheet = workbook.getSheetAt(0);
-			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-				Stocks stocks = new Stocks();
-				stocks.setNational("KR");
-				stocks.setSymbol(String.valueOf(sheet.getRow(i).getCell(0)));
-				stocks.setCode("KOSPI");
-				stocks.setName(String.valueOf(sheet.getRow(i).getCell(2)));
-				stocks.setCurrency("KRW");
-				repository.save(stocks);
-			}
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-
-		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
-	}
-
-	@PostMapping("/excel/kosdaq")
-	public BaseResponse saveKosdaq() {
-		Workbook workbook;
-		try {
-			File file = ResourceUtils.getFile("classpath:stock-list/kosdaq_code.xlsx");
-			InputStream in = new FileInputStream(file);
-
-			workbook = new XSSFWorkbook(in);
-			Sheet sheet = workbook.getSheetAt(0);
-			for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-				Stocks stocks = new Stocks();
-				stocks.setNational("KR");
-				stocks.setSymbol(String.valueOf(sheet.getRow(i).getCell(0)));
-				stocks.setCode("KOSDAQ");
-				stocks.setName(String.valueOf(sheet.getRow(i).getCell(2)));
-				stocks.setCurrency("KRW");
-				repository.save(stocks);
-			}
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		}
-
-		return new BaseResponse(ResponseCode.SUCCESS, ResponseCode.SUCCESS.getMessage());
-	}
 }
