@@ -126,11 +126,11 @@ public class KrNowStockPrice {
 	// 제한 폭 가격
 	private Long rstc_wdth_prc;
 	// 주식 액면가
-	private Integer stck_fcam;
+	private BigDecimal stck_fcam;
 	// 주식 대용가
-	private Integer stck_sspr;
+	private BigDecimal stck_sspr;
 	// 호가단위
-	private Integer aspr_unit;
+	private BigDecimal aspr_unit;
 	// HTS 매매 수량 단위 값
 	private BigDecimal hts_deal_qty_unit_val;
 	// 상장 주수
