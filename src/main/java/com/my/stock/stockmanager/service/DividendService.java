@@ -2,8 +2,8 @@ package com.my.stock.stockmanager.service;
 
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.DividendChart;
-import com.my.stock.stockmanager.dto.dividend.DividendInfoDto;
 import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
+import com.my.stock.stockmanager.dto.dividend.DividendInfoDto;
 import com.my.stock.stockmanager.dto.dividend.DividendSumByMonth;
 import com.my.stock.stockmanager.dto.dividend.request.DividendRequest;
 import com.my.stock.stockmanager.exception.StockManagerException;
