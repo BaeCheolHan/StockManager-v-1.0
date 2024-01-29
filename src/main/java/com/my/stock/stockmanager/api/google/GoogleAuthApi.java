@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "googleAuthApi", url="https://oauth2.googleapis.com")
+@FeignClient(name = "googleAuthApi", url = "https://oauth2.googleapis.com")
 public interface GoogleAuthApi {
 	@PostMapping("/token")
 	GoogleToken getGoogleToken(@RequestHeader HttpHeaders headers, @SpringQueryMap GoogleTokenRequest param);
