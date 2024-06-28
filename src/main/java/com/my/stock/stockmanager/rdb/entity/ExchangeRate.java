@@ -1,9 +1,6 @@
 package com.my.stock.stockmanager.rdb.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,7 +15,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ExchangeRate {
 	@Id
-	private Long id = 1L;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String code;
 	private String currencyCode;
 	private String currencyName;

@@ -11,11 +11,17 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +39,7 @@ public class ApiCaller {
 
 	public String get(String url) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
+		ignoreCertificates();
 		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(new HttpHeaders()), String.class);
 		return responseEntity.getBody();
 	}
@@ -169,5 +176,32 @@ public class ApiCaller {
 
 	private String urlEncodeUTF8(String s) {
 		return URLEncoder.encode(s, StandardCharsets.UTF_8);
+	}
+
+
+	private static void ignoreCertificates() {
+		TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+			@Override
+			public X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			@Override
+			public void checkClientTrusted(X509Certificate[] certs, String authType) {
+			}
+
+			@Override
+			public void checkServerTrusted(X509Certificate[] certs, String authType) {
+			}
+		}};
+
+		try {
+			SSLContext sc = SSLContext.getInstance("TLS");
+			sc.init(null, trustAllCerts, new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		} catch (Exception e) {
+
+		}
+
 	}
 }
