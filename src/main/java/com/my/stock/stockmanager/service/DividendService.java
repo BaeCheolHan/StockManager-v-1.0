@@ -51,7 +51,8 @@ public class DividendService {
 
 	public List<DividendChart> getDividendChart(String memberId) {
 		List<Integer> years = repository.findYearByMemberIdGroupByYear(memberId);
-		List<DividendSumByMonth> yearAndMonthlyDividend = repository.findDividendChartByMemberId(memberId);
+		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
+		List<DividendSumByMonth> yearAndMonthlyDividend = repository.findDividendChartByMemberId(memberId, exchangeRate.getBasePrice());
 
 		List<DividendChart> chartData = new ArrayList<>();
 		List<Integer> months = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);

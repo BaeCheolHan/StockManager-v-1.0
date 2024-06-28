@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DividendRepositoryCustom {
 
-	List<DividendSumByMonth> findDividendChartByMemberId(String memberId);
+	List<DividendSumByMonth> findDividendChartByMemberId(String memberId, BigDecimal basePrice);
 	List<DividendInfoDto> findAllByMemberIdOrderByYearMonthDayAsc(String memberId, Sort sort);
 
 	List<DividendInfoByItem> findDividendInfoByMemberIdGroupBySymbol(String memberId, BigDecimal basePrice);

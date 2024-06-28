@@ -27,17 +27,15 @@ public class DividendRepositoryCustomImpl implements DividendRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<DividendSumByMonth> findDividendChartByMemberId(String memberId) {
+	public List<DividendSumByMonth> findDividendChartByMemberId(String memberId, BigDecimal basePrice) {
 		QDividend dividend = QDividend.dividend1;
 		QStocks stocks = QStocks.stocks;
-		QExchangeRate exchangeRate = QExchangeRate.exchangeRate;
 
 		return queryFactory.from(dividend)
 				.select(Projections.fields(DividendSumByMonth.class, dividend.year, dividend.month, stocks.national
 						.when("KR").then(dividend.dividend)
-						.otherwise(dividend.dividend.multiply(exchangeRate.basePrice)).sum().as("dividend")))
+						.otherwise(dividend.dividend.multiply(basePrice)).sum().as("dividend")))
 				.innerJoin(stocks).on(dividend.symbol.eq(stocks.symbol))
-				.join(exchangeRate)
 				.where(dividend.memberId.eq(memberId))
 				.groupBy(dividend.year, dividend.month)
 				.orderBy(dividend.year.asc(), dividend.month.asc())

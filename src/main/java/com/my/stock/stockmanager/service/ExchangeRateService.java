@@ -24,7 +24,6 @@ public class ExchangeRateService {
     public ExchangeRate getExchangeRate() {
         Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findFirstByOrderByIdDesc();
 
-
         return exchangeRate.orElseGet(() -> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
