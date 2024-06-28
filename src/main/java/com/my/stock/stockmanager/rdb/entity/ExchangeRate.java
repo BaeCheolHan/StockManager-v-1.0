@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ExchangeRate {
 	@Id
-	private Long id;
+	private Long id = 1L;
 	private String code;
 	private String currencyCode;
 	private String currencyName;

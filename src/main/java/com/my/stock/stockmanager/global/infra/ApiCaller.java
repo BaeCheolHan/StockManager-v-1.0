@@ -31,6 +31,12 @@ public class ApiCaller {
 
 	private ApiCaller() {}
 
+	public String get(String url) throws IOException {
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(new HttpHeaders()), String.class);
+		return responseEntity.getBody();
+	}
+
 	public String get(String url, Map<String, Object> params) throws IOException {
 		RestTemplate restTemplate = new RestTemplate();
 		UriComponentsBuilder ucb = getUriComponentBuilder(new URL(url));
