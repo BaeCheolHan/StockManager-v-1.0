@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long> {
     Optional<ExchangeRate> findFirstByOrderByIdDesc();
+
+    Optional<ExchangeRate> findByDate(String yyyyMMdd);
 }

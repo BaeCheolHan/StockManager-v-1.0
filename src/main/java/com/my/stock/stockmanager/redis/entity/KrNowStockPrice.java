@@ -218,7 +218,7 @@ public class KrNowStockPrice {
 
 	private DividendInfo dividendInfo;
 
-	@TimeToLive(unit = TimeUnit.MINUTES)
+	@TimeToLive(unit = TimeUnit.DAYS)
 	@Builder.Default
-	private Long expiration = 5L;
+	private Long expiration = 1L;
 }
