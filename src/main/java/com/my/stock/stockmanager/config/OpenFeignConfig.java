@@ -52,4 +52,9 @@ public class OpenFeignConfig {
             template.header("Connection", "close");  // 필요한 경우 연결 종료 헤더 추가
         };
     }
+
+    @Bean
+    public Logger.Level feignLoggerLevel() {
+        return Logger.Level.FULL;  // 전체 요청 및 응답 로깅
+    }
 }
