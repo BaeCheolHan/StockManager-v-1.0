@@ -68,12 +68,12 @@ dependencies {
 tasks.register('copyPrivate', Copy) {
     delete "/src/main/resources"
     copy {
-        from './StockManager-private/resources'
+        from "$projectDir/../../StockManager-private/resources"
         include "*.yml"
         into '/src/main/resources'
     }
     copy {
-        from './StockManager-private/resources/stock-list'
+        from '"$projectDir/../../StockManager-private/resources/stock-list'
         include "*.xlsx"
         into '/src/main/resources/stock-list'
     }
