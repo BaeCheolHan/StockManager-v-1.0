@@ -3,7 +3,12 @@ package com.my.stock.stockmanager.global.infra;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -23,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ApiCaller {

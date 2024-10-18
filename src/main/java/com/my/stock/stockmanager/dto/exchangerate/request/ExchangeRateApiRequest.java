@@ -18,4 +18,8 @@ public class ExchangeRateApiRequest {
         this.searchdate = LocalDateTime.now().minusDays(days).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return this;
     }
+
+    public String getUriQuery() {
+        return String.format("data=%s&authkey=%s&searchdate=", data, authkey, searchdate);
+    }
 }
