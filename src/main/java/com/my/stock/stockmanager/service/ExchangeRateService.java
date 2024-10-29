@@ -29,7 +29,7 @@ public class ExchangeRateService {
             try {
                 exchangeRate = this.callExchangeRate();
                 exchangeRateRepository.save(exchangeRate);
-            } catch (IOException ignore) {
+            } catch (Exception ignore) {
                 exchangeRate = new ExchangeRate();
             }
 
@@ -44,7 +44,7 @@ public class ExchangeRateService {
                             ExchangeRate nowExchangeRate = null;
                             try {
                                 nowExchangeRate = this.callExchangeRate();
-                            } catch (IOException ignored) {}
+                            } catch (Exception ignored) {}
                             if(nowExchangeRate != null) {
                                 olderExchangeRate.setBasePrice(nowExchangeRate.getBasePrice());
                                 olderExchangeRate.setCashBuyingPrice(nowExchangeRate.getCashBuyingPrice());
@@ -57,7 +57,9 @@ public class ExchangeRateService {
                             ExchangeRate exchangeRate = null;
                             try {
                                 exchangeRate = this.callExchangeRate();
-                            } catch (IOException ignored) {}
+                            } catch (IOException ignored) {} catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                             if(exchangeRate != null) {
                                 exchangeRateRepository.save(exchangeRate);
                             }
@@ -65,7 +67,7 @@ public class ExchangeRateService {
 
     }
 
-    public ExchangeRate callExchangeRate() throws IOException {
+    public ExchangeRate callExchangeRate() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
@@ -89,7 +91,7 @@ public class ExchangeRateService {
                 }).findFirst().get();
     }
 
-    private List<ExchangeRateDto> callApi(ExchangeRateApiRequest request) throws IOException {
+    private List<ExchangeRateDto> callApi(ExchangeRateApiRequest request) throws Exception {
         String responseBody  = ApiCaller.getInstance().get("https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?" + request.getUriQuery());
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(responseBody, new TypeReference<>() {});

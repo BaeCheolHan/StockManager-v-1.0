@@ -1,5 +1,15 @@
 package com.my.stock.stockmanager.global.infra;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -9,7 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -41,11 +50,36 @@ public class ApiCaller {
 
 	private ApiCaller() {}
 
-	public String get(String url) throws IOException {
-		RestTemplate restTemplate = new RestTemplate();
+	public String get(String url) throws Exception {
+		RestTemplate restTemplate = createRestTemplate();
+		System.out.println("call");
 		ignoreCertificates();
 		ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(new HttpHeaders()), String.class);
 		return responseEntity.getBody();
+	}
+
+	private RestTemplate createRestTemplate() throws Exception {
+		SSLContext sslContext = SSLContextBuilder.create()
+				.loadTrustMaterial((chain, authType) -> true)  // 모든 인증서 신뢰
+				.build();
+
+		SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(
+				sslContext,
+				NoopHostnameVerifier.INSTANCE  // 호스트 이름 검증 비활성화
+		);
+
+		Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+				.register("http", PlainConnectionSocketFactory.getSocketFactory())
+				.register("https", socketFactory)
+				.build();
+
+		CloseableHttpClient httpClient = HttpClients.custom()
+				.setConnectionManagerShared(true)
+				.setConnectionManager(new org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager(socketFactoryRegistry))
+				.build();
+
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+		return new RestTemplate(factory);
 	}
 
 	public String get(String url, Map<String, Object> params) throws IOException {
