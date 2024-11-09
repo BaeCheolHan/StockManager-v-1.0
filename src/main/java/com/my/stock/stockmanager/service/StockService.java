@@ -1,41 +1,43 @@
 package com.my.stock.stockmanager.service;
 
-import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ResponseCode;
-import com.my.stock.stockmanager.dto.kis.request.KrDailyStockChartPriceRequest;
-import com.my.stock.stockmanager.dto.kis.request.OverSeaDailyStockChartPriceRequest;
-import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceOutput2;
-import com.my.stock.stockmanager.dto.kis.response.KrDailyStockChartPriceWrapper;
-import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceOutput2;
-import com.my.stock.stockmanager.dto.kis.response.OverSeaDailyStockChartPriceWrapper;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
-import com.my.stock.stockmanager.dto.stock.response.DetailStockChartSeries;
 import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfo;
 import com.my.stock.stockmanager.exception.StockManagerException;
 import com.my.stock.stockmanager.mongodb.documents.MyStockList;
 import com.my.stock.stockmanager.mongodb.repository.MyStockListRepository;
 import com.my.stock.stockmanager.rdb.data.service.BankAccountDataService;
 import com.my.stock.stockmanager.rdb.data.service.StocksDataService;
-import com.my.stock.stockmanager.rdb.entity.*;
-import com.my.stock.stockmanager.rdb.repository.*;
+import com.my.stock.stockmanager.rdb.entity.BankAccount;
+import com.my.stock.stockmanager.rdb.entity.ExchangeRate;
+import com.my.stock.stockmanager.rdb.entity.Member;
+import com.my.stock.stockmanager.rdb.entity.MyStockSnapShot;
+import com.my.stock.stockmanager.rdb.entity.Stock;
+import com.my.stock.stockmanager.rdb.entity.Stocks;
+import com.my.stock.stockmanager.rdb.repository.DividendRepository;
+import com.my.stock.stockmanager.rdb.repository.ExchangeRateRepository;
+import com.my.stock.stockmanager.rdb.repository.MemberRepository;
+import com.my.stock.stockmanager.rdb.repository.MyStockSnapShotRepository;
+import com.my.stock.stockmanager.rdb.repository.StockRepository;
 import com.my.stock.stockmanager.redis.data.service.KrNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.data.service.OverSeaNowStockPriceDataService;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
-import com.my.stock.stockmanager.utils.KisApiUtils;
 import com.my.stock.stockmanager.utils.StockUiDataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +62,7 @@ public class StockService {
 	private final StockUiDataUtils stockUiDataUtils;
 
 	private final ChartService chartService;
-
+	private final ExchangeRateService exchangeRateService;
 
 	public List<DashboardStock> getStocks(String memberId, Long bankId) {
 
@@ -77,7 +79,8 @@ public class StockService {
 
 		List<DashboardStock> stocks = myStocks.getData();
 
-		List<ExchangeRate> exchangeRateList = exchangeRateRepository.findAll();
+
+		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
 		stocks.forEach(stock -> {
 			if (!stock.getNational().equals("KR")) {
 				OverSeaNowStockPrice overSeaNowStockPrice = overSeaNowStockPriceDataService.findById(stock.getSymbol());
@@ -120,7 +123,7 @@ public class StockService {
 						}
 					}
 					if (!it.getNational().equals("KR")) {
-						return it.getNowPrice().multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice()).multiply(it.getQuantity());
+						return it.getNowPrice().multiply(exchangeRate.getBasePrice()).multiply(it.getQuantity());
 					} else {
 						return it.getNowPrice().multiply(it.getQuantity());
 					}
@@ -130,7 +133,7 @@ public class StockService {
 			if (!stock.getNational().equals("KR")) {
 				stock.setPriceImportance(
 						stock.getNowPrice()
-								.multiply(exchangeRateList.get(exchangeRateList.size() - 1).getBasePrice())
+								.multiply(exchangeRate.getBasePrice())
 								.multiply(stock.getQuantity())
 								.divide(totalInvestmentAmount, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.FLOOR));
 
