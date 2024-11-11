@@ -32,7 +32,7 @@ public class OverSeaNowStockPriceDataService {
 
 	public OverSeaNowStockPrice findById(String symbol) {
 
-		return overSeaNowStockPriceRepository.findById(symbol).orElseGet(() -> {
+		OverSeaNowStockPrice entity = overSeaNowStockPriceRepository.findById(symbol).orElseGet(() -> {
 			try {
 				Stocks stocks = stocksDataService.findBySymbol(symbol);
 				HttpHeaders headers = kisApiUtils.getDefaultApiHeader("HHDFS76200200");
@@ -56,5 +56,15 @@ public class OverSeaNowStockPriceDataService {
 			}
 
 		});
+
+		if(entity.getDividendInfo() == null){
+			DividendInfo dividendInfo = dividendInfoDataService.findByIdOrElseNew(symbol);
+
+			entity.setDividendInfo(dividendInfo);
+
+			overSeaNowStockPriceRepository.save(entity);
+		}
+
+		return entity;
 	}
 }
