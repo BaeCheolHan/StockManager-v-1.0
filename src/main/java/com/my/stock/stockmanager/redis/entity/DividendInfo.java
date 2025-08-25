@@ -20,11 +20,8 @@ public class DividendInfo {
 	@Id
 	private String symbol;
 
-	@Builder.Default
 	private BigDecimal annualDividend = BigDecimal.ZERO;
-	@Builder.Default
 	private BigDecimal dividendRate = BigDecimal.ZERO;
-	@Builder.Default
 	private List<StockDividendHistory> dividendHistories = new ArrayList<>();
 
 }

@@ -39,6 +39,7 @@ import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.Map;
 
+@Deprecated
 public class ApiCaller {
 
 	private static ApiCaller instance;

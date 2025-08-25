@@ -1,6 +1,7 @@
 package com.my.stock.stockmanager.controller;
 
 import com.my.stock.stockmanager.base.response.BaseResponse;
+import com.my.stock.stockmanager.constants.ChartType;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.*;
@@ -47,8 +48,8 @@ public class StockController {
 	}
 
 	@GetMapping("/chart/{chartType}/{national}/{symbol}")
-	public DetailStockChartSeriesResponse getDailyChartData(@PathVariable String chartType, @PathVariable String national, @PathVariable String symbol) throws Exception {
-		return DetailStockChartSeriesResponse.builder().chartData(chartService.getDailyChartData(chartType, national, symbol))
+	public DetailStockChartSeriesResponse getDailyChartData(@PathVariable ChartType chartType, @PathVariable String national, @PathVariable String symbol) throws Exception {
+		return DetailStockChartSeriesResponse.builder().chartData(chartService.getDailyChartData(chartType.name(), national, symbol))
 				.code(ResponseCode.SUCCESS).message(ResponseCode.SUCCESS.getMessage())
 				.build();
 	}

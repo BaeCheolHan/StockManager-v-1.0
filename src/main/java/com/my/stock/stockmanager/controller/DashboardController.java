@@ -1,5 +1,6 @@
 package com.my.stock.stockmanager.controller;
 
+import com.my.stock.stockmanager.constants.ChartType;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dashboard.index.response.IndexChartResponse;
 import com.my.stock.stockmanager.dto.dashboard.volumerank.response.KrStockVolumeRankResponse;
@@ -19,8 +20,8 @@ public class DashboardController {
 	private final DashboardService dashboardService;
 
 	@GetMapping("/index-chart/{chartType}")
-	public IndexChartResponse getIndexChart(@PathVariable String chartType) throws Exception {
-		return dashboardService.getIndexChart(chartType);
+	public IndexChartResponse getIndexChart(@PathVariable ChartType chartType) throws Exception {
+		return dashboardService.getIndexChart(chartType.name());
 	}
 
 	@GetMapping("/kr/volume/{id}")

@@ -1,5 +1,20 @@
 package com.my.stock.stockmanager.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.dividend.DividendChart;
 import com.my.stock.stockmanager.dto.dividend.DividendInfoByItem;
@@ -13,16 +28,6 @@ import com.my.stock.stockmanager.rdb.repository.DividendRepository;
 import com.my.stock.stockmanager.rdb.repository.StocksRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,30 +54,33 @@ public class DividendService {
 		repository.save(entity);
 	}
 
+	@Cacheable(cacheNames = com.my.stock.stockmanager.constants.CacheNames.DIVIDEND_CHART, key = "#memberId")
 	public List<DividendChart> getDividendChart(String memberId) {
 		List<Integer> years = repository.findYearByMemberIdGroupByYear(memberId);
 		ExchangeRate exchangeRate = exchangeRateService.getExchangeRate();
 		List<DividendSumByMonth> yearAndMonthlyDividend = repository.findDividendChartByMemberId(memberId, exchangeRate.getBasePrice());
 
+		// 연-월 데이터 맵으로 전처리 (탐색 비용 감소)
+		var byYearMonth = yearAndMonthlyDividend.stream()
+				.collect(Collectors.groupingBy(DividendSumByMonth::getYear,
+						Collectors.toMap(DividendSumByMonth::getMonth, DividendSumByMonth::getDividend)));
+
 		List<DividendChart> chartData = new ArrayList<>();
 		List<Integer> months = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
 		LocalDate toDay = LocalDate.now();
+
 		for (Integer year : years) {
+			var monthMap = byYearMonth.getOrDefault(year, java.util.Collections.emptyMap());
+			List<BigDecimal> chartSeries = months.stream()
+					.map(m -> monthMap.getOrDefault(m, BigDecimal.ZERO))
+					.collect(Collectors.toList());
+
 			DividendChart dataRow = new DividendChart();
 			dataRow.setName(year.toString());
-
-			List<DividendSumByMonth> annualDividendData = yearAndMonthlyDividend.stream().filter(it -> it.getYear() == year).toList();
-			List<BigDecimal> chartSeries = new ArrayList<>();
-			for (Integer month : months) {
-				Optional<DividendSumByMonth> data = annualDividendData.stream().filter(it -> it.getMonth() == month).findFirst();
-				chartSeries.add(data.isPresent() ? data.get().getDividend() : BigDecimal.ZERO);
-			}
-
 			dataRow.setData(chartSeries);
-			dataRow.setTotal(chartSeries.stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO).setScale(0, RoundingMode.FLOOR));
-			dataRow.setAvg(dataRow.getTotal()
-					.divide(String.valueOf(toDay.getYear()).equals(dataRow.getName()) ? BigDecimal.valueOf(toDay.getMonthValue()) : BigDecimal.valueOf(12), 2, RoundingMode.FLOOR)
-			);
+			dataRow.setTotal(chartSeries.stream().reduce(BigDecimal.ZERO, BigDecimal::add).setScale(0, RoundingMode.FLOOR));
+			BigDecimal divisor = String.valueOf(toDay.getYear()).equals(dataRow.getName()) ? BigDecimal.valueOf(toDay.getMonthValue()) : BigDecimal.valueOf(12);
+			dataRow.setAvg(dataRow.getTotal().divide(divisor, 2, RoundingMode.FLOOR));
 			chartData.add(dataRow);
 		}
 

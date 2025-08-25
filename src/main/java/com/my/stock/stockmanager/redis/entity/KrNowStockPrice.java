@@ -10,10 +10,11 @@ import org.springframework.data.redis.core.TimeToLive;
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
+@Builder
 @Getter
 @Setter
 @RedisHash("KrNowStockPrice")
-public class KrNowStockPrice {
+public class KrNowStockPrice implements NowStockPrice {
 	// 주식 단축 종목코드
 	@Id
 	private String symbol;
@@ -221,4 +222,14 @@ public class KrNowStockPrice {
 	@TimeToLive(unit = TimeUnit.DAYS)
 	@Builder.Default
 	private Long expiration = 1L;
+
+	public BigDecimal compareToYesterday() {
+		if (stck_prpr == null || stck_sdpr == null) return BigDecimal.ZERO;
+		return stck_prpr.subtract(stck_sdpr);
+	}
+
+	@Override
+	public BigDecimal nowPrice() {
+		return stck_prpr;
+	}
 }

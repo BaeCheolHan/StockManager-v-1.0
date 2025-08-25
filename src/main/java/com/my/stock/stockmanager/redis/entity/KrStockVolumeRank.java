@@ -20,6 +20,5 @@ public class KrStockVolumeRank {
 	private KrStockVolumeRankWrapper data;
 
 	@TimeToLive(unit = TimeUnit.MINUTES)
-	@Builder.Default
 	private Long expiration = 3L;
 }

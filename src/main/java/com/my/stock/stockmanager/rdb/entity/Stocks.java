@@ -5,6 +5,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import com.my.stock.stockmanager.constants.National;
+import com.my.stock.stockmanager.constants.Currency;
 
 @EqualsAndHashCode(callSuper = false)
 @Builder
@@ -33,4 +35,16 @@ public class Stocks {
 	// 통화 구분
 	@NotNull
 	private String currency;
+
+	public boolean isKorean() {
+		return National.from(this.national).isKr();
+	}
+
+	public boolean isForeign() {
+		return !isKorean();
+	}
+
+	public Currency currencyEnum() {
+		return Currency.from(this.currency);
+	}
 }

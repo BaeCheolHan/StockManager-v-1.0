@@ -13,7 +13,7 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import javax.net.ssl.SSLContext;
 
 @Configuration
-@EnableFeignClients("com.my.stock.stockmanager.api")
+@EnableFeignClients(basePackages = {"com.my.stock.stockmanager.api"})
 public class OpenFeignConfig {
 
     @Bean

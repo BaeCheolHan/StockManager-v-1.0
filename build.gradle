@@ -41,15 +41,20 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis:3.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
     implementation 'io.github.openfeign:feign-httpclient:11.10'  // Feign Apache HttpClient 연동
+
+    // Resilience4j (optional - keep core, remove reactor)
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
 
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.15.2'

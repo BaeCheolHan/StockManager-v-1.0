@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GoogleTokenRequest {
-	@Builder.Default
 	private String grant_type = "authorization_code";
 	private String client_id;
 	private String client_secret;

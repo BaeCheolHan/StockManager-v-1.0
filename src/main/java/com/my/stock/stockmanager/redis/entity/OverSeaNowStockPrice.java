@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @RedisHash("OverSeaNowStockPrice")
-public class OverSeaNowStockPrice {
+public class OverSeaNowStockPrice implements NowStockPrice {
 	// 실시간조회종목코드
 //	D+시장구분(3자리)+종목코드
 //	예) DNASAAPL : D+NAS(나스닥)+AAPL(애플)
@@ -111,7 +111,16 @@ public class OverSeaNowStockPrice {
 	private DividendInfo dividendInfo;
 
 	@TimeToLive(unit = TimeUnit.DAYS)
-	@Builder.Default
 	private Long expiration = 1L;
+
+    public BigDecimal compareToYesterday() {
+        if (last == null || base == null) return BigDecimal.ZERO;
+        return last.subtract(base);
+    }
+
+    @Override
+    public BigDecimal nowPrice() {
+        return last;
+    }
 
 }

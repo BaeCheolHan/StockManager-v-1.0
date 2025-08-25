@@ -23,6 +23,5 @@ public class KrIndexChart {
 	private KrDailyIndexChartPriceWrapper data;
 
 	@TimeToLive(unit = TimeUnit.MINUTES)
-	@Builder.Default
 	private Long expiration = 3L;
 }

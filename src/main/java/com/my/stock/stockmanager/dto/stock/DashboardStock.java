@@ -3,6 +3,7 @@ package com.my.stock.stockmanager.dto.stock;
 import lombok.*;
 
 import java.math.BigDecimal;
+import com.my.stock.stockmanager.model.Money;
 
 @Getter
 @Setter
@@ -27,5 +28,25 @@ public class DashboardStock {
 	// 수익률
 	private String rateOfReturnPer;
 
+	public void calculateRateOfReturn() {
+		if (nowPrice == null || avgPrice == null) {
+			this.rateOfReturnPer = "0.00";
+			return;
+		}
+		BigDecimal change = nowPrice.subtract(avgPrice);
+		this.rateOfReturnPer = Money.percentToString(change, avgPrice);
+	}
 
+	public void calculatePriceImportance(BigDecimal totalInvestment, BigDecimal exchangeRateBasePriceIfOversea) {
+		BigDecimal baseAmount = nowPrice;
+		if (baseAmount == null || quantity == null) {
+			this.priceImportance = BigDecimal.ZERO;
+			return;
+		}
+		BigDecimal amount = baseAmount.multiply(quantity);
+		if (!"KR".equals(national) && exchangeRateBasePriceIfOversea != null) {
+			amount = amount.multiply(exchangeRateBasePriceIfOversea);
+		}
+		this.priceImportance = Money.percent(amount, totalInvestment);
+	}
 }

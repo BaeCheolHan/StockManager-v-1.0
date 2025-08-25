@@ -23,6 +23,5 @@ public class OverSeaIndexChart {
 	private OverSeaDailyIndexChartPriceWrapper data;
 
 	@TimeToLive(unit = TimeUnit.MINUTES)
-	@Builder.Default
 	private Long expiration = 3L;
 }
