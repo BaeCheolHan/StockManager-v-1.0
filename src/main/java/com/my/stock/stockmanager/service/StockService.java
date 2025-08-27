@@ -162,7 +162,7 @@ public class StockService {
 		member.getBankAccount()
 				.forEach(bank -> stocks.addAll(bank.getStocks().stream().filter(stock -> stock.getSymbol().equals(symbol)).toList()));
 		BigDecimal totalDividend = dividendRepository.findDividendSumByMemberIdAndSymbol(memberId, symbol);
-		if (com.my.stock.stockmanager.constants.National.from(national).isKr()) {
+		if (National.from(national).isKr()) {
 			KrNowStockPrice entity = nowStockPriceDataService.findKrById(symbol);
 			return MyDetailStockInfo.ofKr(
 					entity,

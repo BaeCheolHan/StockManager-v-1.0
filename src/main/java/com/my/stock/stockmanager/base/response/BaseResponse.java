@@ -3,10 +3,12 @@ package com.my.stock.stockmanager.base.response;
 import com.my.stock.stockmanager.constants.ResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class BaseResponse {
     private ResponseCode code;
