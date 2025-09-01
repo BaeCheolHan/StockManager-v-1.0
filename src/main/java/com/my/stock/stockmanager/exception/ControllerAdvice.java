@@ -16,6 +16,7 @@ public class ControllerAdvice {
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<BaseResponse> handleInternalServerError(Exception e) {
+		e.printStackTrace();
 		log.error(e.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseResponse(ResponseCode.INTERNAL_ERROR, ResponseCode.INTERNAL_ERROR.getMessage()));
 	}

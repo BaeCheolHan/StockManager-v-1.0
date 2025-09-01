@@ -4,11 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
-import static com.my.stock.stockmanager.constants.CacheNames.CHART_SERIES;
 
 import com.my.stock.stockmanager.api.kis.KisApi;
 import com.my.stock.stockmanager.constants.ChartType;
@@ -31,7 +28,6 @@ public class ChartService {
 	private final StocksDataService stocksDataService;
 	private final KisApi kisApi;
 
-	@Cacheable(cacheNames = CHART_SERIES, key = "#chartType + ':' + #national + ':' + #symbol")
 	public List<DetailStockChartSeries> getDailyChartData(String chartType, String national, String symbol) throws Exception {
 		ChartType ct = ChartType.from(chartType);
 		if (com.my.stock.stockmanager.constants.National.from(national).isKr()) {
