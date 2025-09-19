@@ -18,4 +18,12 @@ public interface StocksRepository extends JpaRepository<Stocks, String> {
 	List<Stocks> findAllByCode(String code);
 
 	Optional<Stocks> findBySymbol(String symbol);
+
+	List<Stocks> findAllBySymbolLike(String symbol);
+
+	@Query(value = "SELECT s.* FROM stocks s LEFT JOIN stock_search_stat t ON t.symbol = s.symbol WHERE s.name LIKE %:q% OR s.symbol LIKE %:q% ORDER BY (CASE WHEN s.name LIKE :qprefix THEN 3 WHEN s.name LIKE %:q% THEN 2 WHEN s.symbol LIKE %:q% THEN 1 ELSE 0 END) DESC, COALESCE(t.hit_count,0) DESC, s.name LIMIT :limit", nativeQuery = true)
+	List<Stocks> searchByKeyword(@Param("q") String q, @Param("qprefix") String qprefix, @Param("limit") int limit);
+
+	@Query(value = "SELECT s.* FROM stocks s JOIN stock_search_stat t ON t.symbol = s.symbol WHERE t.last_hit_at > NOW() - INTERVAL 30 DAY ORDER BY t.hit_count DESC, t.last_hit_at DESC LIMIT :limit", nativeQuery = true)
+	List<Stocks> findTrending(@Param("limit") int limit);
 }

@@ -5,6 +5,8 @@ import com.my.stock.stockmanager.rdb.entity.*;
 import com.my.stock.stockmanager.rdb.repository.custom.StockRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -23,33 +25,58 @@ public class StockRepositoryCustomImpl implements StockRepositoryCustom {
 		QStock stock = QStock.stock;
 		QStocks stocks = QStocks.stocks;
 		QBankAccount bankAccount = QBankAccount.bankAccount;
-		QDividendSubSelect dividendSubSelect = QDividendSubSelect.dividendSubSelect;
+		QDividendSubSelect dsub = QDividendSubSelect.dividendSubSelect;
 
-		BooleanBuilder builder = new BooleanBuilder();
-		if(memberId != null) {
-			builder.and(bankAccount.member.id.eq(memberId));
+		BooleanBuilder where = new BooleanBuilder();
+		if (memberId != null) {
+			where.and(bankAccount.member.id.eq(memberId));
+		}
+		if (bankId != null) {
+			where.and(bankAccount.id.eq(bankId));
 		}
 
-		if(bankId != null) {
-			builder.and(bankAccount.id.eq(bankId));
-		}
+		// sum(price*qty) / NULLIF(sum(qty),0)
+		NumberExpression<BigDecimal> sumPxQ =
+				stock.price.multiply(stock.quantity).sum();
+		NumberExpression<BigDecimal> sumQ =
+				stock.quantity.sum().castToNum(BigDecimal.class);
 
-		return queryFactory.from(stock)
-				.select(Projections.fields(DashboardStock.class,
+		NumberExpression<BigDecimal> avgPriceSafe =
+				Expressions.numberTemplate(
+						BigDecimal.class,
+						"({0}) / NULLIF({1},0)",
+						sumPxQ, sumQ
+				);
+
+		return queryFactory
+				.from(stock)
+				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
+				.innerJoin(bankAccount).on(stock.bankAccount.id.eq(bankAccount.id))
+				// DividendSubSelect는 memberId + symbol 복합키(@IdClass)로 고쳤다고 가정
+				.leftJoin(dsub).on(
+						dsub.symbol.eq(stock.symbol)
+								.and(dsub.memberId.eq(bankAccount.member.id))
+				)
+				.where(where)
+				.select(Projections.fields(
+						DashboardStock.class,
+						stock.symbol.as("symbol"),
+						stocks.code.as("code"),
+						stocks.national.as("national"),
+						stocks.name.as("name"),
+						avgPriceSafe.as("avgPrice"),
+						sumQ.as("quantity"),
+						dsub.totalDividend.coalesce(BigDecimal.ZERO).as("totalDividend")
+				))
+				// SELECT에 있는 비집계 컬럼은 전부 groupBy
+				.groupBy(
 						stock.symbol,
 						stocks.code,
 						stocks.national,
-						stocks.name,
-						stock.price.multiply(stock.quantity).sum().divide(stock.quantity.sum()).as("avgPrice"),
-						stock.quantity.sum().as("quantity"),
-						dividendSubSelect.totalDividend.coalesce(BigDecimal.ZERO).as("totalDividend")
-				))
-				.innerJoin(stocks).on(stock.symbol.eq(stocks.symbol))
-				.innerJoin(bankAccount).on(stock.bankAccount.id.eq(bankAccount.id))
-				.leftJoin(dividendSubSelect).on(stock.symbol.eq(dividendSubSelect.symbol).and(bankAccount.member.id.eq(dividendSubSelect.memberId)))
-				.where(builder)
-				.orderBy(stock.quantity.asc())
-				.groupBy(stock.symbol)
+						stocks.name
+				)
+				// 집계 기준으로 정렬 (원하면 바꿔도 됨)
+				.orderBy(sumQ.desc())
 				.fetch();
 	}
 }
