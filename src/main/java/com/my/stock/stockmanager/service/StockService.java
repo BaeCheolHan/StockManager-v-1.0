@@ -9,8 +9,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.my.stock.stockmanager.constants.ResponseCode;
+import com.my.stock.stockmanager.base.entity.BaseTimeEntity;
 import com.my.stock.stockmanager.constants.National;
+import com.my.stock.stockmanager.constants.ResponseCode;
 import com.my.stock.stockmanager.dto.stock.DashboardStock;
 import com.my.stock.stockmanager.dto.stock.request.StockSaveRequest;
 import com.my.stock.stockmanager.dto.stock.response.MyDetailStockInfo;
@@ -161,13 +162,14 @@ public class StockService {
 		List<Stock> stocks = new ArrayList<>();
 		member.getBankAccount()
 				.forEach(bank -> stocks.addAll(bank.getStocks().stream().filter(stock -> stock.getSymbol().equals(symbol)).toList()));
+		List<Stock> sortedStocks = stocks.stream().sorted(Comparator.comparing(BaseTimeEntity::getCreatedDate)).toList();
 		BigDecimal totalDividend = dividendRepository.findDividendSumByMemberIdAndSymbol(memberId, symbol);
 		if (National.from(national).isKr()) {
 			KrNowStockPrice entity = nowStockPriceDataService.findKrById(symbol);
 			return MyDetailStockInfo.ofKr(
 					entity,
 					totalDividend,
-					stocks,
+					sortedStocks,
 					chartService.getDailyChartData("D", national, symbol)
 			);
 		} else {
@@ -175,7 +177,7 @@ public class StockService {
 			return MyDetailStockInfo.ofOversea(
 					entity,
 					totalDividend,
-					stocks,
+					sortedStocks,
 					chartService.getDailyChartData("D", national, symbol)
 			);
 		}

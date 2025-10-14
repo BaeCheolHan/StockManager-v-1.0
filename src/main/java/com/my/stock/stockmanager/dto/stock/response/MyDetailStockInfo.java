@@ -1,14 +1,14 @@
 package com.my.stock.stockmanager.dto.stock.response;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.my.stock.stockmanager.rdb.entity.Stock;
 import com.my.stock.stockmanager.redis.entity.DividendInfo;
 import com.my.stock.stockmanager.redis.entity.KrNowStockPrice;
 import com.my.stock.stockmanager.redis.entity.OverSeaNowStockPrice;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Builder
