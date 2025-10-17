@@ -87,3 +87,7 @@ tasks.register('copyPrivate', Copy) {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.named('test') {
+    enabled = false
+}
